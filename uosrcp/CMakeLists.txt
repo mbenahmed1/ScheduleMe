@@ -19,7 +19,7 @@ add_compile_options(
 
 add_library(uosrcp STATIC
     src/io.cpp
-)
+        ../scheduler/include/solution.h ../scheduler/src/solution.cpp)
 
 target_include_directories(uosrcp PUBLIC include)
 
