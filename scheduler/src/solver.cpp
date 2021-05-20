@@ -16,5 +16,5 @@ int main(int argc, char** argv)
 
     ScheduleGenerator sgs;
 
-    sgs.sgs(instance);
+    sgs.serial_sgs(instance);
 }

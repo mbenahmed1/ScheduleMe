@@ -13,7 +13,8 @@ using namespace uosrcp;
 class ScheduleGenerator
 {
 public:
-    std::vector<unsigned int> sgs(Instance &instance);
+    std::vector<unsigned int> serial_sgs(Instance &instance);
+
 };
 
 
