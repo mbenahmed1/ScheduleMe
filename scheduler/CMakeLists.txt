@@ -19,5 +19,5 @@ add_subdirectory(../uosrcp ${CMAKE_CURRENT_BINARY_DIR}/uosrcp)
 
 #--------------------------------------------------------------------
 
-add_executable(solver src/solver.cpp)
+add_executable(solver src/solver.cpp src/schedule_generator.cpp)
 target_link_libraries(solver uosrcp)
