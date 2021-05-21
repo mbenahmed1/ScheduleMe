@@ -23,6 +23,8 @@ struct Instance {
 
     std::vector<std::vector<unsigned int>> successors;
 
+    std::vector<std::vector<unsigned int>> predecessors;
+
     std::size_t n() const { return processing_time.size(); }
     std::size_t r() const { return resources.size(); }
 };

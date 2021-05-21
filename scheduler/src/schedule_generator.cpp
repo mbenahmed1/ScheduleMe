@@ -5,12 +5,12 @@
 
 std::vector<unsigned int> ScheduleGenerator::serial_sgs(Instance &instance) {
 
-    int index = 0;
     for (unsigned long i = 0; i < instance.n(); i++)
     {
-        for (unsigned long j = 0; j < instance.successors[i].size(); j++)
+        for (unsigned long j = 0; j < instance.predecessors[i].size(); j++)
         {
-            std::cout << i << " -> " << j << ": " << instance.successors[i][j] + 1 << std::endl;
+            std::cout << "Predecessors of " << i + 1 << ": " << instance.predecessors[i][j] + 1 << std::endl;
+
         } 
         
     }
