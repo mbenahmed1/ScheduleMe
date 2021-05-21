@@ -5,14 +5,39 @@
 
 std::vector<unsigned int> ScheduleGenerator::serial_sgs(Instance &instance) {
 
+    std::vector<unsigned int> E_1;
+
     for (unsigned long i = 0; i < instance.n(); i++)
     {
-        for (unsigned long j = 0; j < instance.predecessors[i].size(); j++)
+        if (instance.predecessors[i].size() < 1)
         {
-            std::cout << "Predecessors of " << i + 1 << ": " << instance.predecessors[i][j] + 1 << std::endl;
-
-        } 
-        
+            E_1.push_back(i);
+        }
     }
+
+    unsigned int j;
+    unsigned int t;
+    while(true)
+    {
+        j = spt(instance);
+        
+        t = 0;
+        // for (unsigned long i = 0; i < instance.predecessors[j].size(); i++)
+        // {
+        //     if ()
+        // }
+
+        if (true)
+        {
+            break;
+        }
+    }
+
     return std::vector<unsigned int>();
+}
+
+unsigned int ScheduleGenerator::spt(Instance &instance)
+{   
+    std::vector<unsigned int>::iterator result = std::min_element(instance.processing_time.begin(), instance.processing_time.end());
+    return std::distance(instance.processing_time.begin(), result);
 }
