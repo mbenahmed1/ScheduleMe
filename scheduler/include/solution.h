@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include <uosrcp/instance.h>
+#include <memory>
 
 namespace uosrcp {
 
