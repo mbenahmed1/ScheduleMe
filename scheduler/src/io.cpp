@@ -35,7 +35,9 @@ Instance read_instance(std::istream& is)
         is >> instance.resources[i];
         is_good_or_throw(is, "bad stream after reading resource availability");
     }
-
+    
+    instance.rsc_profile.resize(r);
+    
     instance.processing_time.resize(n);
     instance.demands.resize(n);
     instance.successors.resize(n);
@@ -77,6 +79,8 @@ Instance read_instance(std::istream& is)
             instance.predecessors[instance.successors[i][j]].push_back(i);
         }
     }
+
+    instance.start_time = std::vector<unsigned int>(n, 0);
 
     return instance;
 }

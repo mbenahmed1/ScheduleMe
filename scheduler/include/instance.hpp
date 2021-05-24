@@ -21,6 +21,8 @@ struct Instance {
 
     std::vector<unsigned int> start_time;
 
+    std::vector<std::vector<unsigned int>> rsc_profile; 
+
     std::vector<std::vector<unsigned int>> demands;
 
     std::vector<std::vector<unsigned int>> successors;
