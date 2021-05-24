@@ -69,6 +69,15 @@ Instance read_instance(std::istream& is)
         }
     }
 
+    instance.predecessors.resize(n);
+    for (unsigned long i = 0; i < instance.n(); i++)
+    {
+        for (unsigned long j = 0; j < instance.successors[i].size(); j++)
+        {
+            instance.predecessors[instance.successors[i][j]].push_back(i);
+        }
+    }
+
     return instance;
 }
 
