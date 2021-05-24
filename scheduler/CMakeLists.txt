@@ -15,4 +15,4 @@ add_compile_options(
 
 #--------------------------------------------------------------------
 
-add_executable(solver src/solver.cpp src/io.cpp)
+add_executable(solver src/solver.cpp src/io.cpp src/schedule_generator.cpp)
