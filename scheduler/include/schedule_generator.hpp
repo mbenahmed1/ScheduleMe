@@ -6,3 +6,8 @@
 #define SCHEDULEME_SCHEDULE_GENERATOR_H
 
 #endif //SCHEDULEME_SCHEDULE_GENERATOR_H
+
+namespace ScheduleMe
+{
+    
+} // namespace ScheduleMe

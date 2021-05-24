@@ -1,9 +1,9 @@
-#include <uosrcp/io.h>
+#include "../include/io.hpp"
 
 #include <fstream>
 
 
-namespace uosrcp {
+namespace ScheduleMe {
 
 static void is_good_or_throw(std::istream& is, const char* msg)
 {

@@ -2,7 +2,12 @@
 // Created by Marcel Hündorf on 18.05.21.
 //
 
-#ifndef UOSRCP_SOLUTION_H
-#define UOSRCP_SOLUTION_H
+#ifndef SCHEDULEME_SOLUTION_H
+#define SCHEDULEME_SOLUTION_H
 
-#endif //UOSRCP_SOLUTION_H
+#endif //SCHEDULEME_SOLUTION_H
+
+namespace ScheduleMe
+{
+    
+} // namespace ScheduleMe

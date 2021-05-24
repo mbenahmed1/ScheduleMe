@@ -7,7 +7,7 @@
 #include <vector>
 
 
-namespace uosrcp {
+namespace ScheduleMe {
 
 using Demand = unsigned int;
 using Time = unsigned int;

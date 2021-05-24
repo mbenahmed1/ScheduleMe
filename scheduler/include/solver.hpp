@@ -6,3 +6,9 @@
 #define SCHEDULEME_SOLVER_H
 
 #endif //SCHEDULEME_SOLVER_H
+
+
+namespace ScheduleMe
+{
+    
+} // namespace ScheduleMe

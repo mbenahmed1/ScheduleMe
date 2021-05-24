@@ -7,10 +7,14 @@
 
 #include <iostream>
 
+using namespace ScheduleMe;
+
 int main(int argc, char** argv)
 {
     std::cout << "Solver" << std::endl;
 
-    uosrcp::Instance instance = uosrcp::read_instance("../../instances/j30/J301_1.RCP");
+    Instance instance = read_instance("../../instances/j30/J301_1.RCP");
+
 
 }
+

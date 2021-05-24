@@ -3,7 +3,7 @@
 #ifndef UOSRCP_IO_H
 #define UOSRCP_IO_H
 
-#include "instance.h"
+#include "instance.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -11,7 +11,7 @@
 #include <string>
 #include <iterator>
 
-namespace uosrcp {
+namespace ScheduleMe {
 
 /**
  * Exception indicating I/O errors.
