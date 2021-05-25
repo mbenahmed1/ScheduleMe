@@ -62,7 +62,7 @@ void ResourceProfile::schedule_at(unsigned int start_time, unsigned int activity
 
         for (unsigned int i = start_time; i < completion_time; i++)
         {
-            current_profile.at(i) = activity_demands;
+            current_profile.at(i) += activity_demands;
         }
 
     }

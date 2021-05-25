@@ -32,6 +32,9 @@ void ScheduleGenerator::earliest_start_schedule(Instance &instance, const std::v
         }
         rp.schedule_at(t, j);
         instance.start_time.at(j) = t;
+        //std::cout << "\n\n--------------------------------------------------------" << std::endl;
+        //std::cout << "Added " << j << " at " << t << " p_i: " << instance.processing_time[j] <<  " r_i: " << instance.demands[j][0] << ", " << instance.demands[j][1] << ", " << instance.demands[j][2] << ", "<< instance.demands[j][3] << ", "<< std::endl;
+        //rp.print_resource_profiles();
     }
 
     rp.print_resource_profiles();
