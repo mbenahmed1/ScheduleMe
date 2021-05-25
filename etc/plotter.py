@@ -148,28 +148,19 @@ colors = [
 
 
 def check_overlap(rect_a: Rectangle, rect_b: Rectangle) -> bool:
-    # bottom left
+
     a_x_bottom_left, a_y_bottom_left = rect_a.get_xy()
     b_x_bottom_left, b_y_bottom_left = rect_b.get_xy()
 
-    # bottom right
     a_x_bottom_right = a_x_bottom_left + rect_a.get_width()
     b_x_bottom_right = b_x_bottom_left + rect_b.get_width()
     a_y_bottom_right = a_y_bottom_left
     b_y_bottom_right = b_y_bottom_left
 
-    # top right
     a_x_top_right = a_x_bottom_right
     b_x_top_right = b_x_bottom_right
     a_y_top_right = a_y_bottom_right + rect_a.get_height()
     b_y_top_right = b_y_bottom_right + rect_b.get_height()
-
-    # top left
-
-    a_x_top_left = a_x_bottom_left
-    b_x_top_left = b_x_bottom_left
-    a_y_top_left = a_y_top_right
-    b_y_top_left = b_y_top_right
 
     return not (a_x_top_right < b_x_bottom_left or a_x_bottom_left > b_x_top_right or a_y_top_right < b_y_bottom_left or a_y_bottom_left > b_y_top_right)
 
@@ -218,7 +209,7 @@ def parse_files(sol_path: str):
                         demand), facecolor=colors[_id + 30], edgecolor='black')
                     rect_dict = {str(_id): rect}
                     rects.append(rect)
-                    
+
                     for r in rects:
                         if check_overlap(r, rect):
                             rect.set_y(r.get_height() + rect.get_height())
