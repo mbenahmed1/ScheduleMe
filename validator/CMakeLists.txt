@@ -13,11 +13,5 @@ add_compile_options(
   -Wstrict-overflow=5 -Wswitch-default -Wundef -Wno-unused
 )
 
-#--------------------------------------------------------------------
+add_executable(uosrcp-validator main.cpp ../scheduler/src/io.cpp)
 
-add_subdirectory(../uosrcp ${CMAKE_CURRENT_BINARY_DIR}/uosrcp)
-
-#--------------------------------------------------------------------
-
-add_executable(uosrcp-validator main.cpp)
-target_link_libraries(uosrcp-validator uosrcp)
