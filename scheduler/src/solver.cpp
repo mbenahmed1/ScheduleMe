@@ -23,5 +23,12 @@ int main(int argc, char** argv)
 
     ScheduleGenerator::earliest_start_schedule(instance, precedence_list);
 
+    ScheduleMe::write_solution(instance.start_time, "./test.sol");
+
+    for (int i = 0; i < instance.n(); i++)
+    {
+        std::cout << i << " " << instance.start_time[i] << ", ";
+    }
+
 }
 
