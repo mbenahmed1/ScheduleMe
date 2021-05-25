@@ -14,6 +14,10 @@ ResourceProfile::ResourceProfile(Instance &instance) : instance(instance)
 
 unsigned int ResourceProfile::get_available_capacity(unsigned int time, unsigned int resource) const
 {
+    if (time >= profiles.at(resource).size())
+    {
+        return instance.resources.at(resource);
+    }
     unsigned int max_capacity = instance.resources.at(resource);
     unsigned int current_capacity = profiles.at(resource).at(time);
 
@@ -58,7 +62,7 @@ void ResourceProfile::schedule_at(unsigned int start_time, unsigned int activity
 
         for (unsigned int i = start_time; i < completion_time; i++)
         {
-            current_profile.at(i) = activity_demands;
+            current_profile.at(i) += activity_demands;
         }
 
     }

@@ -17,15 +17,18 @@ int main(int argc, char** argv)
 
     Instance instance = read_instance("../../instances/j30/J301_1.RCP");
 
-    ScheduleGenerator::earliest_start_schedule(instance, std::vector<unsigned int>(20));
+    std::vector<unsigned int> precedence_list;
 
-    ResourceProfile rsc(instance);
+    ScheduleGenerator::generate_precedence_list(instance, precedence_list);
 
-    rsc.schedule_at(0, 1);
-    rsc.schedule_at(9, 2);
+    ScheduleGenerator::earliest_start_schedule(instance, precedence_list);
 
-    rsc.print_resource_profiles();
+    ScheduleMe::write_solution(instance.start_time, "./test.sol");
 
+    for (int i = 0; i < instance.n(); i++)
+    {
+        std::cout << i << " " << instance.start_time[i] << ", ";
+    }
 
 }
 

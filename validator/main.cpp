@@ -1,5 +1,5 @@
 
-#include <uosrcp/io.h>
+#include "../scheduler/include/io.hpp"
 
 #include <algorithm>
 #include <iostream>
@@ -14,8 +14,8 @@ int main(int argc, char** argv)
 
     try {
 
-        const auto instance = uosrcp::read_instance(argv[1]);
-        const auto solution = uosrcp::read_solution(argv[2]);
+        const auto instance = ScheduleMe::read_instance(argv[1]);
+        const auto solution = ScheduleMe::read_solution(argv[2]);
 
         if (instance.n() != solution.size()) {
             std::cerr << "instance has " << instance.n() << " activites, but solution has "
