@@ -14,6 +14,10 @@ ResourceProfile::ResourceProfile(Instance &instance) : instance(instance)
 
 unsigned int ResourceProfile::get_available_capacity(unsigned int time, unsigned int resource) const
 {
+    if (time >= profiles.at(resource).size())
+    {
+        return instance.resources.at(resource);
+    }
     unsigned int max_capacity = instance.resources.at(resource);
     unsigned int current_capacity = profiles.at(resource).at(time);
 
