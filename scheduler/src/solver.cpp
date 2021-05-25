@@ -25,10 +25,7 @@ int main(int argc, char** argv)
 
     ScheduleMe::write_solution(instance.start_time, "./test.sol");
 
-    for (int i = 0; i < instance.n(); i++)
-    {
-        std::cout << i << " " << instance.start_time[i] << ", ";
-    }
+    instance.write_plotable("./test.lol");
 
 }
 
