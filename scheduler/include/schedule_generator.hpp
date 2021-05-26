@@ -24,7 +24,7 @@ public:
      */ 
     static void earliest_start_schedule(Instance &instance, const std::vector<unsigned int> &act_list);
 
-    static void generate_precedence_list(Instance &instance, std::vector<unsigned int> &list);
+    static std::vector<unsigned int> generate_precedence_list(Instance &instance);
 
 private:
     /**
@@ -37,7 +37,6 @@ private:
      */ 
     static unsigned int spt(Instance &instance);
 
-    static void generate_precedence_list_rec(Instance &instance, std::vector<unsigned int> &list, unsigned int act);
 };
 
 } // namespace ScheduleMe

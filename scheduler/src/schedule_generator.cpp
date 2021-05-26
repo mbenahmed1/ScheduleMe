@@ -2,6 +2,7 @@
 // Created by tim on 18.05.21.
 //
 #include "../include/schedule_generator.hpp"
+#include <numeric>
 
 namespace ScheduleMe
 {
@@ -45,30 +46,12 @@ unsigned int ScheduleGenerator::spt(Instance &instance)
     return 0;
 }
 
-void ScheduleGenerator::generate_precedence_list(Instance &instance, std::vector<unsigned int> &list)
+std::vector<unsigned int> ScheduleGenerator::generate_precedence_list(Instance &instance)
 {
-    for (unsigned int i = 0; i < instance.n(); i++)
-    {
-        if (instance.predecessors[i].empty())
-        {
-            generate_precedence_list_rec(instance, list, i);
-        }
-    }
+    std::vector<unsigned int> ret(instance.n());
+    std::iota(ret.begin(), ret.end(), 0);
+    return ret;
 }
-
-void ScheduleGenerator::generate_precedence_list_rec(Instance &instance, std::vector<unsigned int> &list, unsigned int act)
-{
-    if (std::find(list.begin(), list.end(), act) == list.end())
-    {
-        list.push_back(act);
-
-        for (unsigned int i = 0; i < instance.successors[act].size(); i++)
-        {
-            generate_precedence_list_rec(instance, list, instance.successors[act][i]);
-        }
-    }
-}
-
 
 } // namespace ScheduleMe
 

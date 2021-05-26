@@ -17,9 +17,7 @@ int main(int argc, char** argv)
 
     Instance instance = read_instance("../../instances/j30/J301_1.RCP");
 
-    std::vector<unsigned int> precedence_list;
-
-    ScheduleGenerator::generate_precedence_list(instance, precedence_list);
+    std::vector<unsigned int> precedence_list = ScheduleGenerator::generate_precedence_list(instance);
 
     ScheduleGenerator::earliest_start_schedule(instance, precedence_list);
 
