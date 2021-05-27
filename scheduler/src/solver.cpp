@@ -80,7 +80,6 @@ bool parse_arguments(int argc, char **argv)
 
         if (result == -1)
         {
-            std::cout << "usage" << std::endl;
             break;
         }
         switch (result)
@@ -127,12 +126,11 @@ int main(int argc, char **argv)
     {
         return EXIT_FAILURE;
     }
-
     Instance instance = read_instance(INSTANCE_PATH);
 
     std::vector<unsigned int> precedence_list = ScheduleGenerator::generate_precedence_list(instance);
 
-    ScheduleGenerator::earliest_start_schedule(instance, precedence_list);
+    ScheduleGenerator::earliest_start_schedule(instance, precedence_list, VERBOSE);
 
     ScheduleMe::write_solution(instance.start_time, SOLUTION_PATH);
 
