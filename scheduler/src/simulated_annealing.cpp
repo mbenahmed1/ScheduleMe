@@ -3,7 +3,7 @@
 namespace ScheduleMe
 {
 
-SimulatedAnnealing::SimulatedAnnealing(double time_limit, double alpha, double t_i, int seed) : time_limit(time_limit), alpha(alpha), t_i(t_i), seed(seed)
+SimulatedAnnealing::SimulatedAnnealing(double time_limit, double alpha, double t_i, int seed) : time_limit(time_limit), alpha(alpha), start_temp(start_temp), seed(seed)
 {
 }
 
@@ -53,7 +53,6 @@ int SimulatedAnnealing::solve(Instance &instance)
         }
 
         i++;
-
         t_i = next_temp(t_i, i);
         // reanneal_temp(t_i);
 
@@ -78,7 +77,7 @@ double SimulatedAnnealing::get_start_temp() const
 
 double SimulatedAnnealing::reanneal_temp(double t_i)
 {
-    if(t_i < 0.0001)
+    if(t_i < 0.001)
     {
         t_i = this->start_temp;
         return t_i;

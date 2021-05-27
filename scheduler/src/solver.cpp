@@ -5,6 +5,7 @@
 #include "../include/io.hpp"
 #include "../include/solver.hpp"
 #include "../include/schedule_generator.hpp"
+#include "simulated_annealing.hpp"
 
 #include <getopt.h>
 #include <iostream>
@@ -128,9 +129,8 @@ int main(int argc, char **argv)
     }
     Instance instance = read_instance(INSTANCE_PATH);
 
-    std::vector<unsigned int> precedence_list = ScheduleGenerator::generate_precedence_list(instance);
-
-    ScheduleGenerator::earliest_start_schedule(instance, precedence_list, VERBOSE);
+    SimulatedAnnealing sa = SimulatedAnnealing(TIME_LIMIT, ALPHA, TEMPERATURE, SEED);
+    sa.solve(instance);
 
     ScheduleMe::write_solution(instance.start_time, SOLUTION_PATH);
 
