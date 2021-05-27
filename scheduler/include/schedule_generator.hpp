@@ -12,7 +12,7 @@
 
 namespace ScheduleMe
 {
-    
+
 class ScheduleGenerator
 {
 public:
@@ -21,8 +21,10 @@ public:
      * Calculates an earliest start schedule from a given instance.
      * 
      * @param instance reference to the instance.
-     */ 
-    static void earliest_start_schedule(Instance &instance, const std::vector<unsigned int> &act_list);
+     */
+    static unsigned int
+    earliest_start_schedule(Instance &instance, const std::vector<unsigned int> &act_list, bool verbose = false);
+
 
     static std::vector<unsigned int> generate_precedence_list(Instance &instance);
 
@@ -34,7 +36,7 @@ private:
      * 
      * @param instance is the instance to look for the shortest activity.
      * @return the index of the shortest activity.
-     */ 
+     */
     static unsigned int spt(Instance &instance);
 
 };
