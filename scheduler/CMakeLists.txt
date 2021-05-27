@@ -15,4 +15,4 @@ add_compile_options(
 
 #--------------------------------------------------------------------
 
-add_executable(solver src/solver.cpp src/io.cpp src/schedule_generator.cpp src/resource_profile.cpp include/resource_profile.hpp)
+add_executable(solver src/solver.cpp src/io.cpp src/schedule_generator.cpp src/resource_profile.cpp include/resource_profile.hpp include/neighborhoods.hpp src/neighborhoods.cpp)

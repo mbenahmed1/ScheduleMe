@@ -5,6 +5,7 @@
 #include "../include/io.hpp"
 #include "../include/solver.hpp"
 #include "../include/schedule_generator.hpp"
+#include "../include/neighborhoods.hpp"
 #include "../include/resource_profile.hpp"
 
 #include <iostream>
