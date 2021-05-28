@@ -8,6 +8,8 @@ import numpy as np
 import matplotlib
 import random
 import re
+import time
+import subprocess
 
 class Act:
     def __init__(self, _id: int, start: int, proc: int, demand: int, y_pos: int):
@@ -48,36 +50,41 @@ def check_y_pos_2(act: Act, acts: list, cap: int) -> bool:
                 return False
     return True
 
-def plot_acts(acts: list, plotted_acts: list, cap: int, start_id: int):
+def plot_acts(acts: list, plotted_acts: list, cap: int, start_id: int, ct: int):
 
     #print(f'len {len(acts)} s_id {start_id}')
     # new_rect = Rectangle((acts[start_id].start, acts[start_id].y_pos), acts[start_id].proc, acts[start_id].demand, facecolor="grey", edgecolor='black')
-    
-    print(start_id, acts[start_id].y_pos)
+    # print(ct)
+    # print(len(plotted_acts))
+    # print(start_id, acts[start_id]._id, acts[start_id].y_pos)
     if check_y_pos_2(acts[start_id], plotted_acts, cap):
         plotted_acts.append(acts[start_id])
-        print(start_id)
-        for act in plotted_acts:
-            print(act)
+        # print(start_id, acts[start_id]._id, "fitted")
+        # for act in plotted_acts:
+        #     print(act)
         if start_id < (len(acts) - 1):
-            if not plot_acts(acts, plotted_acts, cap, start_id + 1):
+            if not plot_acts(acts, plotted_acts, cap, start_id + 1, ct + 1):
                 plotted_acts.pop()
                 acts[start_id].y_pos += 1
                 if check_rect_feaseability(acts[start_id], cap):
-                    return plot_acts(acts, plotted_acts, cap, start_id)
+                    return plot_acts(acts, plotted_acts, cap, start_id, ct + 1)
+                else:
+                    # print(start_id, acts[start_id]._id, "infeasable")
+                    acts[start_id].y_pos = 0
+                    return False
 
         return True
         #print("+-0")
     else:
-        print(start_id, "y not")
+        # print(start_id, acts[start_id]._id, "y not")
         acts[start_id].y_pos += 1
         if check_rect_feaseability(acts[start_id], cap):
-            print(start_id, "feasable")
+            # print(start_id, acts[start_id]._id, "feasable")
             # plotted_acts.append(acts[start_id])
-            return plot_acts(acts, plotted_acts, cap, start_id)
+            return plot_acts(acts, plotted_acts, cap, start_id, ct + 1)
             #print("+1")
         else:
-            print(start_id, "infeasable")
+            # print(start_id, acts[start_id]._id, "infeasable")
             acts[start_id].y_pos = 0
             #print("-1")
             return False
@@ -169,7 +176,7 @@ def parse_files(sol_path: str):
         feaseable = True
 
         sorted_lines = sorted(
-            lines[2:], key=lambda x: x.split()[1], reverse=True)
+            lines[2:], key=lambda x: x.split()[1], reverse=False)
 
         _ys = []
 
@@ -218,81 +225,102 @@ def parse_files(sol_path: str):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print_usage()
-        sys.exit()
-    else:
-        parse_files(sys.argv[1])
+    print_usage()
+    file = "~/uni/10sem/rcpsp/ScheduleMe/scheduler/build/test.lol"
+    if len(sys.argv) > 1:
+        file = sys.argv[1]
+    # file = sys.argv[1]
+    # parse_files(file)
+    # plt.show()
+
+    # neuer versuch
+    caps = []
+    end_times = []
+    rects = []
+
+    with open(file) as s_file:
+        lines = s_file.readlines()
+        first = lines[0]
+        first = first.split()
+        num_act = int(first[0])
+        num_rsc = int(first[1])
+        colors = plt.cm.Pastel2(np.linspace(0, 1, num_act))
         
+        fig, ax = plt.subplots(num_rsc)
 
-        # neuer versuch
-        caps = []
-        end_times = []
-        rects = []
+        second = lines[1]
+        second = second.split()
+        for i, rsc in enumerate(second):
+            caps.append(int(rsc))
+        
+        acts = {}
+        plotted_acts = {}
+        for rsc in range(num_rsc):
+            acts[rsc] = []
+            plotted_acts[rsc] = []
+        
+        sorted_lines = sorted(lines[2:], key=lambda x: x.split()[1], reverse=False)
 
-        with open(sys.argv[1]) as s_file:
-            lines = s_file.readlines()
-            first = lines[0]
-            first = first.split()
-            num_act = int(first[0])
-            num_rsc = int(first[1])
-            
-            fig, ax = plt.subplots(num_rsc)
-
-            second = lines[1]
-            second = second.split()
-            for i, rsc in enumerate(second):
-                caps.append(int(rsc))
-            
-            acts = {}
-            plotted_acts = {}
+        for line in sorted_lines:
+            line = line.split()
+            _id = int(line[0])
+            start = int(line[1])
+            proc = int(line[2])
+        
             for rsc in range(num_rsc):
-                acts[rsc] = []
-                plotted_acts[rsc] = []
-            
-            sorted_lines = sorted(lines[2:], key=lambda x: x.split()[1], reverse=False)
-            
-            for line in sorted_lines:
-                line = line.split()
-                _id = int(line[0])
-                start = int(line[1])
-                proc = int(line[2])
-            
-                for rsc in range(num_rsc):
-                    demand = int(line[rsc + 3])
-                    if demand > 0:
-                        act = Act(_id, start, proc, demand, 0)
-                        acts[rsc].append(act)
-            
-            for rsc in range(num_rsc):
-                plot_acts(acts[rsc], plotted_acts[rsc], caps[rsc], 0)
-                break;
+                demand = int(line[rsc + 3])
+                if demand > 0:
+                    act = Act(_id, start, proc, demand, 0)
+                    acts[rsc].append(act)
 
-            for rsc in range(num_rsc):
-                for act in plotted_acts[rsc]:
-                    new_rect = Rectangle((act.start, act.y_pos), act.proc, act.demand, facecolor='white', edgecolor='black')
-                    
-                    end_times.append(act.start + act.proc)
 
-                    print(act)
+        # for rsc in range(num_rsc):
+        #     print(f"RESOURCE >>> {rsc}")
+        #     for act in acts[rsc]:
+        #         print(act._id)
+        # sys.exit()
 
-                    ax[rsc].add_artist(new_rect)
-                    rx, ry = new_rect.get_xy()
-                    cx = rx + new_rect.get_width()/2.0
-                    cy = ry + new_rect.get_height()/2.0
-                    ax[rsc].annotate(act._id, (cx, cy), color='black',
-                                   fontsize=8, ha='center', va='center')
-            
-            y_range = range(0, max(caps), 1)
-            x_range = range(0, max(end_times), 1)
-            for i, a in enumerate(ax):
-                # a.grid()
-                a.set(xlim=(-0.1, max(end_times) + 1), ylim=(-0.1,
-                                                            max(caps) + 1), yticks=y_range, xticks=x_range)
-                a.axline((-0.1, caps[i]), (max(end_times),
-                                        caps[i]), ls='--', lw=1.5, color='black')
+        start = time.time_ns()
 
+        for rsc in range(num_rsc):
+            acts[rsc] = sorted(acts[rsc], key=lambda x: x.start, reverse=False)
+
+        for rsc in range(num_rsc):
+            # print(f"\n<<<<< Now plotting resource {rsc} >>>>>\n")
+            plot_acts(acts[rsc], plotted_acts[rsc], caps[rsc], 0, 0)
+            # plt.show()
+
+        print((time.time_ns() - start) / 1000000000.0)
+
+        for rsc in range(num_rsc):
+            if not (len(acts[rsc]) == len(plotted_acts[rsc])):
+                print(f"Resource {rsc} does not contain all activities!")
+                sys.exit(-1)
+            else:
+                print(f"Resource {rsc} okay.")
+
+        for rsc in range(num_rsc):
+            for act in plotted_acts[rsc]:
+                new_rect = Rectangle((act.start, act.y_pos), act.proc, act.demand, facecolor=colors[act._id], edgecolor='black')
                 
+                end_times.append(act.start + act.proc)
 
+                # print(act)
+
+                ax[rsc].add_artist(new_rect)
+                rx, ry = new_rect.get_xy()
+                cx = rx + new_rect.get_width()/2.0
+                cy = ry + new_rect.get_height()/2.0
+                ax[rsc].annotate(act._id, (cx, cy), color='black',
+                                fontsize=8, ha='center', va='center')
+        
+        y_range = range(0, max(caps), 1)
+        x_range = range(0, max(end_times), 1)
+        for i, a in enumerate(ax):
+            # a.grid()
+            a.set(xlim=(-0.1, max(end_times) + 1), ylim=(-0.1,
+                                                        max(caps) + 1), yticks=y_range, xticks=x_range)
+            a.axline((-0.1, caps[i]), (max(end_times),
+                                    caps[i]), ls='--', lw=1.5, color='black')
 
     plt.show()
