@@ -15,7 +15,7 @@ class Neighborhoods {
 public:
     Neighborhoods(unsigned int seed);
 
-    std::vector<unsigned int> swap(std::vector<unsigned int> precedenceList, ScheduleMe::Instance& instance);
+    void swap(std::vector<unsigned int> &precedenceList, ScheduleMe::Instance& instance);
 };
 
 

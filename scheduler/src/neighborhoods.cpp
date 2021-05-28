@@ -9,7 +9,7 @@ Neighborhoods::Neighborhoods(unsigned int seed) {
     std::srand(seed);
 }
 
-std::vector<unsigned int> Neighborhoods::swap(std::vector<unsigned int> precedenceList, ScheduleMe::Instance& instance) {
+void Neighborhoods::swap(std::vector<unsigned int> &precedenceList, ScheduleMe::Instance& instance) {
 
     unsigned int idx_a;
     unsigned int idx_b;
@@ -24,7 +24,6 @@ std::vector<unsigned int> Neighborhoods::swap(std::vector<unsigned int> preceden
     unsigned int temp = precedenceList.at(idx_a);
     precedenceList.at(idx_a) = precedenceList.at(idx_b);
     precedenceList.at(idx_b) = temp;
-    return precedenceList;
 
 }
 

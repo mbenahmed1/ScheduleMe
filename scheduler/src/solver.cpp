@@ -147,7 +147,6 @@ int main(int argc, char **argv)
     if (NOHEUR)
     {
         std::vector<unsigned int> s = ScheduleGenerator::generate_precedence_list(instance);
-        std::cout << std::endl;
         unsigned int c_s = ScheduleGenerator::earliest_start_schedule(instance, s, VERBOSE);
         std::cout << "nh makespan: " << c_s << std::endl;
     }
@@ -155,8 +154,6 @@ int main(int argc, char **argv)
     {
         SimulatedAnnealing sa = SimulatedAnnealing(TIME_LIMIT, ALPHA, TEMPERATURE, SEED, VERBOSE);
         std::vector<unsigned int> s = sa.solve(instance);
-
-        std::cout << std::endl;
         unsigned int c_s = ScheduleGenerator::earliest_start_schedule(instance, s, VERBOSE);
         std::cout << "sa makespan: " << c_s << std::endl;
     }
