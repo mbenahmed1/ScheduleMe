@@ -45,7 +45,7 @@ using namespace ScheduleMe;
 std::string INSTANCE_PATH;
 std::string SOLUTION_PATH;
 int TIME_LIMIT = 1;
-int SEED = 1;
+unsigned int SEED = 1;
 double ALPHA = 0.9;
 double TEMPERATURE = 1.0;
 bool NOHEUR = false;
@@ -65,14 +65,14 @@ bool parse_arguments(int argc, char **argv)
     //Specifying the expected options
     //The two options l and b expect numbers as argument
     static struct option long_options[] = {
-            {"timelimit", required_argument, 0,       't'},
-            {"temp",      required_argument, 0,       'c'},
-            {"seed",      required_argument, 0,       's'},
-            {"in",        required_argument, 0,       'i'},
-            {"out",       required_argument, 0,       'o'},
-            {"alpha",     required_argument, 0,       'a'},
-            {"noheur",    no_argument,       0,       'n'},
-            {"verbose",   no_argument,       0,       'v'},
+            {"timelimit", required_argument, nullptr, 't'},
+            {"temp",      required_argument, nullptr, 'c'},
+            {"seed",      required_argument, nullptr, 's'},
+            {"in",        required_argument, nullptr, 'i'},
+            {"out",       required_argument, nullptr, 'o'},
+            {"alpha",     required_argument, nullptr, 'a'},
+            {"noheur",    no_argument,       nullptr, 'n'},
+            {"verbose",   no_argument,       nullptr, 'v'},
             {nullptr, 0,                     nullptr, 0}
     };
 
@@ -94,7 +94,7 @@ bool parse_arguments(int argc, char **argv)
                 TEMPERATURE = std::stod(optarg);
                 break;
             case 's' :
-                SEED = std::stoi(optarg);
+                SEED = std::stoul(optarg);
                 break;
             case 'i' :
                 INSTANCE_PATH = optarg;
@@ -147,24 +147,17 @@ int main(int argc, char **argv)
     if (NOHEUR)
     {
         std::vector<unsigned int> s = ScheduleGenerator::generate_precedence_list(instance);
-        for (int i = 0; i < s.size(); i++)
-        {
-            std::cout << s[i] << ",";
-        }
         std::cout << std::endl;
-        int c_s = ScheduleGenerator::earliest_start_schedule(instance, s, VERBOSE);
+        unsigned int c_s = ScheduleGenerator::earliest_start_schedule(instance, s, VERBOSE);
         std::cout << "nh makespan: " << c_s << std::endl;
     }
     else
     {
         SimulatedAnnealing sa = SimulatedAnnealing(TIME_LIMIT, ALPHA, TEMPERATURE, SEED, VERBOSE);
         std::vector<unsigned int> s = sa.solve(instance);
-        for (int i = 0; i < s.size(); i++)
-        {
-            std::cout << s[i] << ",";
-        }
+
         std::cout << std::endl;
-        int c_s = ScheduleGenerator::earliest_start_schedule(instance, s, VERBOSE);
+        unsigned int c_s = ScheduleGenerator::earliest_start_schedule(instance, s, VERBOSE);
         std::cout << "sa makespan: " << c_s << std::endl;
     }
 

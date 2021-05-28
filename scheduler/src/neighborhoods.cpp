@@ -14,8 +14,8 @@ std::vector<unsigned int> Neighborhoods::swap(std::vector<unsigned int> preceden
     unsigned int idx_a;
     unsigned int idx_b;
     do {
-        idx_a = static_cast<unsigned int>(rand() % (precedenceList.size()));
-        idx_b = static_cast<unsigned int>(rand() % (precedenceList.size() - 1));
+        idx_a = static_cast<unsigned int>(rand()) % (precedenceList.size());
+        idx_b = static_cast<unsigned int>(rand()) % (precedenceList.size() - 1);
         if (idx_a == idx_b) {
             idx_b++;
         }

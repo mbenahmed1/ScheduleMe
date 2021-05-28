@@ -3,8 +3,8 @@
 namespace ScheduleMe
 {
 
-SimulatedAnnealing::SimulatedAnnealing(double time_limit, double alpha, double t_i, int seed, bool verbose) : 
-time_limit(time_limit), alpha(alpha), start_temp(start_temp), seed(seed), nbh(seed), verbose(verbose)
+SimulatedAnnealing::SimulatedAnnealing(int time_limit, double alpha, double start_temp, unsigned int seed, bool verbose) :
+ nbh(seed), verbose(verbose), time_limit(time_limit), seed(seed),  alpha(alpha), start_temp(start_temp)
 {
 }
 
@@ -12,7 +12,7 @@ std::vector<unsigned int> SimulatedAnnealing::solve(Instance &instance)
 {
     // Current, neighbor, best solution and target function value
     std::vector<unsigned int>       s, s_dash, s_best;
-    int                             c_s, c_s_dash, c_s_best;
+    unsigned int                    c_s, c_s_dash, c_s_best;
 
     // Current temperature and iteration
     double      t_i     = this->start_temp;
@@ -30,8 +30,10 @@ std::vector<unsigned int> SimulatedAnnealing::solve(Instance &instance)
     s_best = s;
 
     // Simulated annealing while time limit is not exceeded
-    time_t start_time = time(NULL);
-    time_t time_spent = 0;
+    //time_t start_time = time(nullptr);
+    //time_t time_spent = 0;
+    auto start = std::chrono::high_resolution_clock::now();
+    long time_spent = 0;
     while(time_spent < time_limit)
     {
         // Generate randomly a solution s_dash
@@ -40,7 +42,7 @@ std::vector<unsigned int> SimulatedAnnealing::solve(Instance &instance)
 
         // If s_dash is better than the current solution or the threshold value 
         // allows a worse solution use s_dash in next step
-        double random = (double) rand() / RAND_MAX;
+        double random = static_cast<double>(rand()) / RAND_MAX;
         if(random < std::min(1.0, euler(c_s_dash, c_s, t_i)))
         {
             s = s_dash;
@@ -61,13 +63,14 @@ std::vector<unsigned int> SimulatedAnnealing::solve(Instance &instance)
         t_i = next_temp(t_i, i);
         // reanneal_temp(t_i);
 
-        time_spent = time(NULL) - start_time;
+        auto end = std::chrono::high_resolution_clock::now();
+        time_spent = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
     }
 
     return s_best;
 }
 
-double SimulatedAnnealing::euler(int c_s_dash, int c_s, double t_i)
+double SimulatedAnnealing::euler(unsigned int c_s_dash, unsigned int c_s, double t_i)
 {
     return std::exp(- (c_s_dash - c_s) / t_i);
 }
@@ -82,7 +85,7 @@ double SimulatedAnnealing::get_start_temp() const
     return this->start_temp;
 }
 
-double SimulatedAnnealing::reanneal_temp(double t_i)
+double SimulatedAnnealing::reanneal_temp(double t_i) const
 {
     if(t_i < 0.001)
     {
@@ -92,7 +95,7 @@ double SimulatedAnnealing::reanneal_temp(double t_i)
     return t_i;
 }
 
-double SimulatedAnnealing::next_temp(double t_i, int i)
+double SimulatedAnnealing::next_temp(double t_i, int i) const
 {
     return t_i * alpha;
     // return t_i / (1 + std::log(1 + i));

@@ -85,7 +85,7 @@ Instance read_instance(std::istream& is)
     instance.predecessors_full.resize(instance.n());
     instance.predecessors_full_rec(std::vector<unsigned int>(), 0);
 
-    for (int i = 0; i < instance.n(); i++)
+    for (unsigned int i = 0; i < instance.n(); i++)
     {
         std::sort(instance.predecessors_full[i].begin(), instance.predecessors_full[i].end());
     }

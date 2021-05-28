@@ -5,6 +5,7 @@
 #include <random>
 #include <vector>
 #include <cstdlib>
+#include <chrono>
 #include "instance.hpp"
 #include "schedule_generator.hpp"
 #include "neighborhoods.hpp"
@@ -16,7 +17,7 @@ class SimulatedAnnealing
 {
 
 public:
-    explicit SimulatedAnnealing(double time_limit, double alpha, double start_temp, int seed, bool verbose);
+    explicit SimulatedAnnealing(int time_limit, double alpha, double start_temp, unsigned int seed, bool verbose);
 
     std::vector<unsigned int> solve(Instance &instance);
 
@@ -28,15 +29,15 @@ private:
 
     Neighborhoods nbh;
 
-    double reanneal_temp(double t_i);
+    double reanneal_temp(double t_i) const;
 
-    double next_temp(double t_i, int i);
+    double next_temp(double t_i, int i) const;
 
-    static double euler(int c_s_dash, int c_s, double t_i);
+    static double euler(unsigned int c_s_dash, unsigned int c_s, double t_i);
 
     bool verbose;
-    double time_limit;
-    int seed;
+    int time_limit;
+    unsigned int seed;
     double alpha;
     double start_temp;
 

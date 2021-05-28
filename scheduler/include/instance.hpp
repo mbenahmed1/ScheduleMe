@@ -37,28 +37,28 @@ struct Instance {
     
     std::size_t r() const { return resources.size(); }
 
-    void predecessors_full_rec(std::vector<unsigned int> predecessors, int index)
+    void predecessors_full_rec(std::vector<unsigned int> predecessor_list, unsigned int index)
     {
         if (predecessors_full[index].size() != 0)
         {
-            for (int i = 0; i < predecessors.size(); i++)
+            for (unsigned int i = 0; i < predecessor_list.size(); i++)
             {
-                if (! (std::find(predecessors_full[index].begin(), predecessors_full[index].end(), predecessors[i]) != predecessors_full[index].end()) )
+                if (! (std::find(predecessors_full[index].begin(), predecessors_full[index].end(), predecessor_list[i]) != predecessors_full[index].end()) )
                 {
-                    predecessors_full[index].push_back(predecessors[i]);
+                    predecessors_full[index].push_back(predecessor_list[i]);
                 }
             }
         }
         else
         {
-            predecessors_full[index] = predecessors;
+            predecessors_full[index] = predecessor_list;
         }
 
-        predecessors.push_back(index);
+        predecessor_list.push_back(index);
 
         for (unsigned int i = 0; i < successors[index].size(); i++)
         {
-            predecessors_full_rec(predecessors, successors[index][i]);
+            predecessors_full_rec(predecessor_list, successors[index][i]);
         }
     }
 
