@@ -39,37 +39,46 @@ def check_y_pos(act: Act, acts: list, cap: int) -> bool:
                     return False
     return True
 
+def check_y_pos_2(act: Act, acts: list, cap: int) -> bool:
+    rect = Rectangle((act.start, act.y_pos), act.proc, act.demand)
+    for i in range(len(acts)):
+        other_rect = Rectangle((acts[i].start, acts[i].y_pos), acts[i].proc, acts[i].demand)
+        if other_rect != rect:
+            if check_overlap(other_rect, rect):
+                return False
+    return True
 
 def plot_acts(acts: list, plotted_acts: list, cap: int, start_id: int):
 
     #print(f'len {len(acts)} s_id {start_id}')
     # new_rect = Rectangle((acts[start_id].start, acts[start_id].y_pos), acts[start_id].proc, acts[start_id].demand, facecolor="grey", edgecolor='black')
     
-
-    if check_y_pos(acts[start_id], plotted_acts, cap):
+    print(start_id, acts[start_id].y_pos)
+    if check_y_pos_2(acts[start_id], plotted_acts, cap):
         plotted_acts.append(acts[start_id])
         print(start_id)
         for act in plotted_acts:
             print(act)
-        print()
         if start_id < (len(acts) - 1):
             if not plot_acts(acts, plotted_acts, cap, start_id + 1):
+                plotted_acts.pop()
                 acts[start_id].y_pos += 1
                 if check_rect_feaseability(acts[start_id], cap):
                     return plot_acts(acts, plotted_acts, cap, start_id)
-                else:
-                    plotted_acts.pop()
 
         return True
         #print("+-0")
     else:
+        print(start_id, "y not")
         acts[start_id].y_pos += 1
         if check_rect_feaseability(acts[start_id], cap):
+            print(start_id, "feasable")
             # plotted_acts.append(acts[start_id])
             return plot_acts(acts, plotted_acts, cap, start_id)
             #print("+1")
         else:
-            acts[start_id].y_pos -= 1
+            print(start_id, "infeasable")
+            acts[start_id].y_pos = 0
             #print("-1")
             return False
     
@@ -241,7 +250,7 @@ if __name__ == "__main__":
                 acts[rsc] = []
                 plotted_acts[rsc] = []
             
-            sorted_lines = sorted(lines[2:], key=lambda x: x.split()[1], reverse=True)
+            sorted_lines = sorted(lines[2:], key=lambda x: x.split()[1], reverse=False)
             
             for line in sorted_lines:
                 line = line.split()
