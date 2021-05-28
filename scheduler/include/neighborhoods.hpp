@@ -6,6 +6,7 @@
 #define SCHEDULER_NEIGHBORHOODS_HPP
 
 #include <vector>
+#include <algorithm>
 #include "instance.hpp"
 
 class Neighborhoods {

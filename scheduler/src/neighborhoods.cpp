@@ -43,19 +43,18 @@ bool Neighborhoods::swap_a_with_b(std::vector<unsigned int> &precedenceList, uns
      */
     std::vector<unsigned int> now_predecessors = std::vector<unsigned int>(precedenceList.begin() + idx_a + 1, precedenceList.begin() + idx_b);
     std::sort(now_predecessors.begin(), now_predecessors.end());
-    std::sort(instance.predecessors.at(idx_b).begin(), instance.predecessors.at(idx_b).end());
 
     unsigned int ptr1 = 0;
     unsigned int ptr2 = 0;
     bool isOk = true;
-    while (ptr1 < now_predecessors.size() && ptr2 < instance.predecessors.at(idx_b).size()) {
-        std::cout << "ptr1: " << ptr1 << "\t";
-        std::cout << "ptr2: " << ptr2 << std::endl;
-        if (now_predecessors.at(ptr1) == instance.predecessors.at(idx_b).at(ptr2)) {
+    while (ptr1 < now_predecessors.size() && ptr2 < instance.predecessors_full.at(idx_b).size()) {
+        // std::cout << "ptr1: " << ptr1 << "\t";
+        // std::cout << "ptr2: " << ptr2 << std::endl;
+        if (now_predecessors.at(ptr1) == instance.predecessors_full.at(idx_b).at(ptr2)) {
             isOk = false;
             break;
         }
-        else if (now_predecessors.at(ptr1) < instance.predecessors.at(idx_b).at(ptr2)) {
+        else if (now_predecessors.at(ptr1) < instance.predecessors_full.at(idx_b).at(ptr2)) {
             ptr1++;
         } else {
             ptr2++;

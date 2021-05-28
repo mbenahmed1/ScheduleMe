@@ -7,7 +7,7 @@
 #include <vector>
 #include <fstream>
 #include <iostream>
-
+#include <algorithm>
 
 namespace ScheduleMe {
 
@@ -29,11 +29,38 @@ struct Instance {
 
     std::vector<std::vector<unsigned int>> successors;
 
+    std::vector<std::vector<unsigned int>> predecessors_full;
+
     std::vector<std::vector<unsigned int>> predecessors;
 
     std::size_t n() const { return processing_time.size(); }
     
     std::size_t r() const { return resources.size(); }
+
+    void predecessors_full_rec(std::vector<unsigned int> predecessors, int index)
+    {
+        if (predecessors_full[index].size() != 0)
+        {
+            for (int i = 0; i < predecessors.size(); i++)
+            {
+                if (! (std::find(predecessors_full[index].begin(), predecessors_full[index].end(), predecessors[i]) != predecessors_full[index].end()) )
+                {
+                    predecessors_full[index].push_back(predecessors[i]);
+                }
+            }
+        }
+        else
+        {
+            predecessors_full[index] = predecessors;
+        }
+
+        predecessors.push_back(index);
+
+        for (unsigned int i = 0; i < successors[index].size(); i++)
+        {
+            predecessors_full_rec(predecessors, successors[index][i]);
+        }
+    }
 
     void write_plotable(std::string path)
     {

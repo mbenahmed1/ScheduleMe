@@ -5,7 +5,7 @@
 #include "../include/io.hpp"
 #include "../include/solver.hpp"
 #include "../include/schedule_generator.hpp"
-#include "simulated_annealing.hpp"
+#include "../include/simulated_annealing.hpp"
 
 #include <getopt.h>
 #include <iostream>
@@ -48,6 +48,7 @@ int TIME_LIMIT = 1;
 int SEED = 1;
 double ALPHA = 0.9;
 double TEMPERATURE = 1.0;
+bool NOHEUR = false;
 bool VERBOSE = false;
 
 bool parse_arguments(int, char **);
@@ -70,6 +71,7 @@ bool parse_arguments(int argc, char **argv)
             {"in",        required_argument, 0,       'i'},
             {"out",       required_argument, 0,       'o'},
             {"alpha",     required_argument, 0,       'a'},
+            {"noheur",    no_argument,       0,       'n'},
             {"verbose",   no_argument,       0,       'v'},
             {nullptr, 0,                     nullptr, 0}
     };
@@ -77,7 +79,7 @@ bool parse_arguments(int argc, char **argv)
     int long_index = 0;
     while (true)
     {
-        int result = getopt_long(argc, argv, "t:c:s:i:o:a:v", long_options, &long_index);
+        int result = getopt_long(argc, argv, "t:c:s:i:o:a:nv", long_options, &long_index);
 
         if (result == -1)
         {
@@ -102,6 +104,9 @@ bool parse_arguments(int argc, char **argv)
                 break;
             case 'a' :
                 ALPHA = std::stod(optarg);
+                break;
+            case 'n' :
+                NOHEUR = true;
                 break;
             case 'v' :
                 VERBOSE = true;
@@ -129,8 +134,39 @@ int main(int argc, char **argv)
     }
     Instance instance = read_instance(INSTANCE_PATH);
 
-    SimulatedAnnealing sa = SimulatedAnnealing(TIME_LIMIT, ALPHA, TEMPERATURE, SEED);
-    sa.solve(instance);
+    // for (int i = 0; i < instance.n(); i++)
+    // {
+    //     std::cout << i << " ";
+    //     for (int j = 0; j < instance.predecessors_full[i].size(); j++)
+    //     {
+    //         std::cout << instance.predecessors_full[i][j] << ",";
+    //     }
+    //     std::cout << std::endl;
+    // }
+
+    if (NOHEUR)
+    {
+        std::vector<unsigned int> s = ScheduleGenerator::generate_precedence_list(instance);
+        for (int i = 0; i < s.size(); i++)
+        {
+            std::cout << s[i] << ",";
+        }
+        std::cout << std::endl;
+        int c_s = ScheduleGenerator::earliest_start_schedule(instance, s, VERBOSE);
+        std::cout << "nh makespan: " << c_s << std::endl;
+    }
+    else
+    {
+        SimulatedAnnealing sa = SimulatedAnnealing(TIME_LIMIT, ALPHA, TEMPERATURE, SEED, VERBOSE);
+        std::vector<unsigned int> s = sa.solve(instance);
+        for (int i = 0; i < s.size(); i++)
+        {
+            std::cout << s[i] << ",";
+        }
+        std::cout << std::endl;
+        int c_s = ScheduleGenerator::earliest_start_schedule(instance, s, VERBOSE);
+        std::cout << "sa makespan: " << c_s << std::endl;
+    }
 
     ScheduleMe::write_solution(instance.start_time, SOLUTION_PATH);
 

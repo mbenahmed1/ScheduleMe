@@ -1,13 +1,14 @@
-#include "simulated_annealing.hpp"
+#include "../include/simulated_annealing.hpp"
 
 namespace ScheduleMe
 {
 
-SimulatedAnnealing::SimulatedAnnealing(double time_limit, double alpha, double t_i, int seed) : time_limit(time_limit), alpha(alpha), start_temp(start_temp), seed(seed)
+SimulatedAnnealing::SimulatedAnnealing(double time_limit, double alpha, double t_i, int seed, bool verbose) : 
+time_limit(time_limit), alpha(alpha), start_temp(start_temp), seed(seed), nbh(seed), verbose(verbose)
 {
 }
 
-int SimulatedAnnealing::solve(Instance &instance)
+std::vector<unsigned int> SimulatedAnnealing::solve(Instance &instance)
 {
     // Current, neighbor, best solution and target function value
     std::vector<unsigned int>       s, s_dash, s_best;
@@ -34,7 +35,7 @@ int SimulatedAnnealing::solve(Instance &instance)
     while(time_spent < time_limit)
     {
         // Generate randomly a solution s_dash
-        s_dash = s; // TODO
+        s_dash = nbh.swap(s, instance);
         c_s_dash = ScheduleGenerator::earliest_start_schedule(instance, s_dash);
 
         // If s_dash is better than the current solution or the threshold value 
@@ -49,6 +50,10 @@ int SimulatedAnnealing::solve(Instance &instance)
             {
                 c_s_best = c_s_dash;
                 s_best = s_dash;
+                // if (verbose)
+                // {
+                //     // TODO
+                // }
             }
         }
 
@@ -58,11 +63,13 @@ int SimulatedAnnealing::solve(Instance &instance)
 
         time_spent = time(NULL) - start_time;
     }
+
+    return s_best;
 }
 
 double SimulatedAnnealing::euler(int c_s_dash, int c_s, double t_i)
 {
-    return std::exp((c_s_dash - c_s) / t_i);
+    return std::exp(- (c_s_dash - c_s) / t_i);
 }
 
 double SimulatedAnnealing::get_alpha() const
@@ -87,9 +94,8 @@ double SimulatedAnnealing::reanneal_temp(double t_i)
 
 double SimulatedAnnealing::next_temp(double t_i, int i)
 {
-    // t_i *= alpha;
-    // return t_i;
-    return t_i / (1 + std::log(1 + i));
+    return t_i * alpha;
+    // return t_i / (1 + std::log(1 + i));
 }
 
 } // namespace ScheduleMe
