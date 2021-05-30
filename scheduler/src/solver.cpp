@@ -93,14 +93,47 @@ bool parse_arguments(int argc, char **argv)
         }
     }
 
-    if (INSTANCE_PATH.empty() || SOLUTION_PATH.empty() || TIME_LIMIT <= 0 || ALPHA <= 0 || TEMPERATURE < 0)
+    INSTANCE_PATH   = argv[1];
+    SOLUTION_PATH   = argv[2];
+    if (! (TIME_LIMIT = std::stol(argv[3])))
     {
+        std::cerr << "Could not parse time-limit!" << std::endl;
         print_usage();
         return false;
     }
+    if (! (SEED = std::stoul(argv[4])))
+    {
+        std::cerr << "Could not parse seed!" << std::endl;
+        print_usage();
+        return false;
+    }
+    if (TIME_LIMIT <= 0)
+    {
+        std::cerr << "Invalid time-limit <= 0!" << std::endl;
+        print_usage();
+        return false;
+    }
+    if (TEMPERATURE < 0.0)
+    {
+        std::cerr << "Invalid temperature < 0!" << std::endl;
+        print_usage();
+        return false;
+    }
+    if (ALPHA <= 0.0)
+    {
+        std::cerr << "Invalid alpha <= 0!" << std::endl;
+        print_usage();
+        return false;
+    }
+    if (NEIGHBORHOOD != "swap" && NEIGHBORHOOD != "api" && NEIGHBORHOOD != "shift" && NEIGHBORHOOD != "random")
+    {
+        std::cerr << "Invalid neighborhood!" << std::endl;
+        print_usage();
+        return false;
+    }
+
     return true;
 }
-
 
 int main(int argc, char **argv)
 {
@@ -108,30 +141,29 @@ int main(int argc, char **argv)
     {
         return EXIT_FAILURE;
     }
-    Instance instance = read_instance(INSTANCE_PATH);
 
-    // for (int i = 0; i < instance.n(); i++)
-    // {
-    //     std::cout << i << " ";
-    //     for (int j = 0; j < instance.predecessors_full[i].size(); j++)
-    //     {
-    //         std::cout << instance.predecessors_full[i][j] << ",";
-    //     }
-    //     std::cout << std::endl;
-    // }
+    Instance instance = read_instance(INSTANCE_PATH);
 
     if (NOHEUR)
     {
         std::vector<unsigned int> s = ScheduleGenerator::generate_precedence_list(instance);
-        unsigned int c_s = ScheduleGenerator::earliest_start_schedule(instance, s, VERBOSE);
-        std::cout << "nh makespan: " << c_s << std::endl;
+        unsigned int c_s = ScheduleGenerator::earliest_start_schedule(instance, s);
+        std::cout << "Initial makespan:" << std::right << std::setw(4) << c_s << std::endl;
+        if (VERBOSE)
+        {
+            std::cout << std::endl;
+            ScheduleGenerator::earliest_start_schedule(instance, s, true);
+        }
     }
     else
     {
-        SimulatedAnnealing sa = SimulatedAnnealing(TIME_LIMIT, ALPHA, TEMPERATURE, SEED, VERBOSE);
+        SimulatedAnnealing sa = SimulatedAnnealing(TIME_LIMIT, ALPHA, TEMPERATURE, SEED, VERBOSE, NEIGHBORHOOD);
         std::vector<unsigned int> s = sa.solve(instance);
-        unsigned int c_s = ScheduleGenerator::earliest_start_schedule(instance, s, VERBOSE);
-        std::cout << "sa makespan: " << c_s << std::endl;
+        if (VERBOSE)
+        {
+            std::cout << std::endl;
+            ScheduleGenerator::earliest_start_schedule(instance, s, true);
+        }
     }
 
     ScheduleMe::write_solution(instance.start_time, SOLUTION_PATH);
