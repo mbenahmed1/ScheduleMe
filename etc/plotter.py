@@ -182,7 +182,7 @@ def parse_files(sol_path: str) -> None:
         num_act = int(first[0])
         num_rsc = int(first[1])
         colors = plt.cm.Pastel2(np.linspace(0, 1, num_act))
-        fig, ax = plt.subplots(num_rsc)
+        fig, ax = plt.subplots(num_rsc, figsize=(12,9))
 
         second = lines[1]
         second = second.split()
@@ -253,6 +253,7 @@ def parse_files(sol_path: str) -> None:
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         parse_files(sys.argv[1])
+        plt.tight_layout()
         plt.show()
         sys.exit(-1)
     else:
