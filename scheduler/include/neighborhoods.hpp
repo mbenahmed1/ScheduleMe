@@ -6,25 +6,31 @@
 #define SCHEDULER_NEIGHBORHOODS_HPP
 
 #include <vector>
+#include <random>
 #include <algorithm>
 #include "instance.hpp"
 
 namespace ScheduleMe {
 
 class Neighborhoods {
-    static bool swap_a_with_b(std::vector<unsigned int> &precedenceList, unsigned int idx_a, unsigned int idx_b, ScheduleMe::Instance& instance);
+    static bool swap_a_with_b(std::vector<unsigned int> &precedence_list, unsigned int idx_a, unsigned int idx_b, Instance& instance);
 
+    std::mt19937 mt_rand;
+
+    std::uniform_real_distribution<double> dis;
 
 public:
     Neighborhoods(unsigned int seed);
 
-    void swap(std::vector<unsigned int> &precedenceList, ScheduleMe::Instance& instance);
+    bool swap(std::vector<unsigned int> &precedence_list, Instance& instance);
 
-    void shift(std::vector<unsigned int> &precedenceList, ScheduleMe::Instance& instance);
+    bool api(std::vector<unsigned int> &precedence_list, Instance& instance);
 
-    void api(std::vector<unsigned int> &precedenceList, Instance& instance);
+    bool shift(std::vector<unsigned int> &precedence_list, Instance& instance);
 
-    static bool checkPrecedence(std::vector<unsigned int> &precedenceList, Instance &instance);
+    bool random(std::vector<unsigned int> &precedence_list, Instance& instance);
+
+    static bool check_precedence(std::vector<unsigned int> &precedence_list, Instance &instance);
 
 };
 
