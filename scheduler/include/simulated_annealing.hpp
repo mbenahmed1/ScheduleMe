@@ -2,10 +2,10 @@
 #define SCHEDULEME_SIMULATED_ANNEALING_H
 
 #include <iomanip>
+#include <iostream>
 #include <algorithm>
 #include <random>
 #include <vector>
-#include <cstdlib>
 #include <chrono>
 #include <iterator>
 #include "instance.hpp"
