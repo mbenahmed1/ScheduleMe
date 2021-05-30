@@ -120,24 +120,24 @@ bool Neighborhoods::check_precedence(std::vector<unsigned int> &precedence_list,
     return true;
 }
 
-// void Neighborhoods::swap(std::vector<unsigned int> &precedenceList, Instance& instance) {
+// void Neighborhoods::swap(std::vector<unsigned int> &precedence_list, Instance& instance) {
 
 //     unsigned int idx_a = 0;
 //     unsigned int idx_b = 0;
 //     do {
 //         while (idx_a == idx_b)
 //         {
-//             idx_a = static_cast<unsigned int>(rand()) % (precedenceList.size());
-//             idx_b = static_cast<unsigned int>(rand()) % (precedenceList.size());
+//             idx_a = static_cast<unsigned int>(rand()) % (precedence_list.size());
+//             idx_b = static_cast<unsigned int>(rand()) % (precedence_list.size());
 //         }
-//     } while (!swap_a_with_b(precedenceList, idx_a, idx_b, instance));
+//     } while (!swap_a_with_b(precedence_list, idx_a, idx_b, instance));
 
-//     unsigned int temp = precedenceList.at(idx_a);
-//     precedenceList.at(idx_a) = precedenceList.at(idx_b);
-//     precedenceList.at(idx_b) = temp;
+//     unsigned int temp = precedence_list.at(idx_a);
+//     precedence_list.at(idx_a) = precedence_list.at(idx_b);
+//     precedence_list.at(idx_b) = temp;
 // }
-// bool Neighborhoods::swap_a_with_b(std::vector<unsigned int> &precedenceList, unsigned int idx_a, unsigned int idx_b,
-//                              ScheduleMe::Instance& instance) {
+
+// bool Neighborhoods::swap_a_with_b(std::vector<unsigned int> &precedence_list, unsigned int idx_a, unsigned int idx_b, Instance &instance) {
 //     // set a to be the idx that is scheduled first and b to the last one
 //     unsigned int temp = idx_a;
 //     idx_a = idx_a < idx_b ? idx_a : idx_b;
@@ -149,7 +149,7 @@ bool Neighborhoods::check_precedence(std::vector<unsigned int> &precedence_list,
 //      to do so sort the activities to be  checked and the predecessors of idx_b to then campare if they have any
 //      element in common
 //      */
-//     std::vector<unsigned int> now_predecessors = std::vector<unsigned int>(precedenceList.begin() + idx_a + 1, precedenceList.begin() + idx_b);
+//     std::vector<unsigned int> now_predecessors = std::vector<unsigned int>(precedence_list.begin() + idx_a, precedence_list.begin() + idx_b);
 //     std::sort(now_predecessors.begin(), now_predecessors.end());
 
 //     unsigned int ptr1 = 0;

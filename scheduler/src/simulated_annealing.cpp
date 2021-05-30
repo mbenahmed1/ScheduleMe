@@ -3,13 +3,17 @@
 namespace ScheduleMe
 {
 
-SimulatedAnnealing::SimulatedAnnealing(double time_limit, double alpha, double start_temp, unsigned int seed, bool verbose, std::string neighborhood) :
-nbh(seed), verbose(verbose), time_limit(time_limit), seed(seed),  alpha(alpha), start_temp(start_temp), mt_rand(seed), dis(0.0,1.0), neighborhood(neighborhood)
+SimulatedAnnealing::SimulatedAnnealing(double time_limit, double alpha, double start_temp, unsigned int seed, 
+    bool verbose, std::string neighborhood, bool benchmark) :
+        nbh(seed), verbose(verbose), time_limit(time_limit), seed(seed),  alpha(alpha), start_temp(start_temp), 
+        mt_rand(seed), dis(0.0,1.0), neighborhood(neighborhood), benchmark(benchmark)
 {
 }
 
 std::vector<unsigned int> SimulatedAnnealing::solve(Instance &instance)
 {
+    auto start = std::chrono::high_resolution_clock::now();
+
     std::cout   << std::fixed << std::setprecision(5);
 
     // auto start = std::chrono::high_resolution_clock::now();
@@ -26,7 +30,7 @@ std::vector<unsigned int> SimulatedAnnealing::solve(Instance &instance)
     int             i           = 0;
     int             approx_i    = -1;
 
-    // Which neighborhood shall we use
+    // Choose neighborhood and get function pointer to the appropiate function
     bool (Neighborhoods::*make_neighbor)(std::vector<unsigned int>&, Instance&);
     if (neighborhood == "swap")
     {
@@ -71,43 +75,49 @@ std::vector<unsigned int> SimulatedAnnealing::solve(Instance &instance)
     }
 
     // Approximate alpha and number of total iterations if alpha is not given
-    tmp = s;
-    if  (alpha == 0.0) 
+    // tmp = s;
+    // if  (alpha == 0.0) 
+    // {
+    //     double total = 0.0;
+    //     if (neighborhood == "random")
+    //     {
+    //         auto before = std::chrono::high_resolution_clock::now();
+    //         nbh.swap(tmp, instance);
+    //         nbh.api(tmp, instance);
+    //         nbh.shift(tmp, instance);
+    //         auto after_nbh = std::chrono::high_resolution_clock::now();
+    //         c_s = ScheduleGenerator::earliest_start_schedule(instance, tmp);
+    //         auto after_ess = std::chrono::high_resolution_clock::now();
+    //         total = std::chrono::duration<double, std::milli>(after_nbh - before).count() / 3.0 + 
+    //                         std::chrono::duration<double, std::milli>(after_ess - after_nbh).count();
+
+    //         // std::cout << total / 1000 << std::endl;
+    //     }
+    //     else
+    //     {
+    //         unsigned int iter = 0;
+    //         auto before = std::chrono::high_resolution_clock::now();
+    //         for (unsigned int i = 0; i < iter; i++)
+    //         {
+    //             (nbh.*make_neighbor)(tmp, instance);
+    //             c_s = ScheduleGenerator::earliest_start_schedule(instance, tmp);
+    //         }
+    //         auto after = std::chrono::high_resolution_clock::now();
+    //         total = std::chrono::duration<double, std::milli>(after - before).count();
+
+    //         // std::cout << total / 1000 << std::endl;
+    //     }
+    //     approx_i = time_limit / total;
+    //     alpha = std::pow(0.00001 / t_i, 1.0 / approx_i);
+    // }
+
+    if (! benchmark)
     {
-        double total = 0.0;
-        if (neighborhood == "random")
-        {
-            auto before = std::chrono::high_resolution_clock::now();
-            nbh.swap(tmp, instance);
-            nbh.api(tmp, instance);
-            nbh.shift(tmp, instance);
-            auto after_nbh = std::chrono::high_resolution_clock::now();
-            c_s = ScheduleGenerator::earliest_start_schedule(instance, tmp);
-            auto after_ess = std::chrono::high_resolution_clock::now();
-            total = std::chrono::duration<double, std::milli>(after_nbh - before).count() / 3.0 + 
-                            std::chrono::duration<double, std::milli>(after_ess - after_nbh).count();
-
-            // std::cout << total / 1000 << std::endl;
-        }
-        else
-        {
-            auto before = std::chrono::high_resolution_clock::now();
-            (nbh.*make_neighbor)(tmp, instance);
-            c_s = ScheduleGenerator::earliest_start_schedule(instance, tmp);
-            auto after = std::chrono::high_resolution_clock::now();
-            total = std::chrono::duration<double, std::milli>(after - before).count();
-
-            // std::cout << total / 1000 << std::endl;
-        }
-        approx_i = time_limit / total;
-        alpha = std::pow(0.00001 / t_i, 1.0 / approx_i);
+        std::cout   << "Initial makespan:" << std::right << std::setw(4) << c_s
+                    << std::right << std::setw(85)
+                    << " | Time limit:" << std::right << std::setw(10) << time_limit / 1000.0
+                    << " | Initial Tmp: " << std::right << std::setw(9) << t_i << std::endl;
     }
-
-    std::cout   << "Initial makespan:" << std::right << std::setw(4) << c_s 
-                << std::right << std::setw(39) << " | Total aprx:" << std::right << std::setw(9) << approx_i
-                << " | Time limit:" << std::right << std::setw(10) << time_limit / 1000.0
-                << " | Initial Tmp: " << std::right << std::setw(9) << t_i
-                << " | Alpha: " << std::right << std::setw(7) << alpha << std::endl;
 
     // Initial best solution is the first one
     s_opt = s;
@@ -115,8 +125,6 @@ std::vector<unsigned int> SimulatedAnnealing::solve(Instance &instance)
 
     s_dash = s;
     c_s_dash = c_s;
-
-    auto start = std::chrono::high_resolution_clock::now();
 
     // Simulated annealing while time limit is not exceeded
     //time_t start_time = time(nullptr);
@@ -128,13 +136,17 @@ std::vector<unsigned int> SimulatedAnnealing::solve(Instance &instance)
         // c_s_dash = ScheduleGenerator::earliest_start_schedule(instance, s_dash);
         s_dash = s;
         while(!(nbh.*make_neighbor)(s_dash, instance)) {}
+        // (nbh.*make_neighbor)(s_dash, instance);
         c_s_dash = ScheduleGenerator::earliest_start_schedule(instance, s_dash);
 
         // If s_dash is better than the current solution or the threshold value 
         // allows a worse solution use s_dash in next step
         random = dis(mt_rand);
         min = std::min(1.0, euler(c_s_dash, c_s, t_i));
-        print_progress(c_s_opt, c_s, i, t_i, time_spent);
+        if (!benchmark)
+        {
+            print_progress(c_s_opt, c_s, i, t_i, time_spent, approx_i, alpha);
+        }
         if(random < min)
         {
             s = s_dash;
@@ -152,10 +164,22 @@ std::vector<unsigned int> SimulatedAnnealing::solve(Instance &instance)
         t_i = next_temp(t_i, i);
         // t_i = reanneal_temp(t_i);
 
+        if (i == 100 && alpha == 1.0)
+        {
+            double crt_time = std::chrono::duration<double, std::milli>(
+                std::chrono::high_resolution_clock::now() - start).count() / 100.0;
+            approx_i = time_limit / crt_time;
+            alpha = std::pow(0.001 / t_i, 1.0 / approx_i);
+        }
+
         auto end = std::chrono::high_resolution_clock::now();
         time_spent = std::chrono::duration<double, std::milli>(end - start).count();
     }
 
+    if (benchmark)
+    {
+        std::cout << c_s_opt;
+    }
     std::cout << std::endl;
     return s_opt;
 }
@@ -194,13 +218,16 @@ double SimulatedAnnealing::next_temp(double t_i, int i) const
     // return t_i / (1 + std::log(1 + i));
 }
 
-void SimulatedAnnealing::print_progress(unsigned int c_s_opt, unsigned int c_s, int step_count, double temp, double time_spent) const
+void SimulatedAnnealing::print_progress(unsigned int c_s_opt, unsigned int c_s, int step_count, double temp, double time_spent, int approx_i, double alpha) const
 {
     std::cout   << "Optimal makespan:" << std::right << std::setw(4) << c_s_opt
                 << " | Current makespan: " << std::right << std::setw(4) << c_s
                 << " | Iteration: " << std::right << std::setw(9) << step_count
+                << " | Approx It: " << std::right << std::setw(9) << approx_i
                 << " | Time spent:" << std::right << std::setw(10) << static_cast<double>(time_spent) / 1000.0
-                << " | Temperature:" << std::right << std::setw(10) << temp << "\r" << std::flush;
+                << " | Temperature:" << std::right << std::setw(10) << temp
+                << " | Alpha:" << std::right << std::setw(10) << alpha << "\r" << std::flush;
+
 }
 
 } // namespace ScheduleMe

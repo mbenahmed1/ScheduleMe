@@ -19,7 +19,8 @@ class SimulatedAnnealing
 {
 
 public:
-    explicit SimulatedAnnealing(double time_limit, double alpha, double start_temp, unsigned int seed, bool verbose, std::string neighborhood);
+    explicit SimulatedAnnealing(double time_limit, double alpha, double start_temp, unsigned int seed, 
+        bool verbose, std::string neighborhood, bool benchmark);
 
     std::vector<unsigned int> solve(Instance &instance);
    
@@ -37,7 +38,7 @@ private:
 
     static double euler(double c_s_dash, double c_s, double t_i);
 
-    void print_progress(unsigned int c_opt, unsigned int c_s, int step_count, double temp, double time_spent) const;
+    void print_progress(unsigned int c_opt, unsigned int c_s, int step_count, double temp, double time_spent, int approx_i, double alpha) const;
 
     bool verbose;
     double time_limit;
@@ -47,6 +48,7 @@ private:
     std::mt19937 mt_rand;
     std::uniform_real_distribution<double> dis;
     std::string neighborhood;
+    bool benchmark;
 
 };
 

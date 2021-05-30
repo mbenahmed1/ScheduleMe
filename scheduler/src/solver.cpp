@@ -18,11 +18,12 @@ static std::string         SOLUTION_PATH;
 static double              TIME_LIMIT;
 static unsigned int        SEED;
 
-static double              ALPHA               = 0.0;
-static double              TEMPERATURE         = 0.0;
-static std::string         NEIGHBORHOOD        = "swap";
-static bool                NOHEUR              = false;
-static bool                VERBOSE             = false;
+static double              ALPHA                = 1.0;
+static double              TEMPERATURE          = 0.0;
+static std::string         NEIGHBORHOOD         = "swap";
+static bool                NOHEUR               = false;
+static bool                VERBOSE              = false;
+static bool                BENCHMARK            = false;
 
 bool parse_arguments(int, char **);
 
@@ -35,10 +36,11 @@ void print_usage()
 
     std::cout << "OPTIONS:" << std::endl;
     std::cout << " --temp, -t           <double>, default=0.0 (initial temperature is calculated dependent on the given instance)" << std::endl;
-    std::cout << " --alpha, -a          <double>, default=0.0 (alpha is calculated dependent on the approximately predicted total number of iterations)" << std::endl;
+    std::cout << " --alpha, -a          <double>, default=1.0 (alpha is calculated dependent on the approximately predicted total number of iterations)" << std::endl;
     std::cout << " --neighborhood, -n   <swap|api|shift|random>, default=swap" << std::endl;
     std::cout << " --noheur, -h         do not optimize the initial solution" << std::endl;
     std::cout << " --verbose, -v        print resource profile of solution" << std::endl;
+    std::cout << " --benchmark, -b      only print optimal makespan and nothing else" << std::endl;
 }
 
 bool parse_arguments(int argc, char **argv)
@@ -51,6 +53,7 @@ bool parse_arguments(int argc, char **argv)
             {"neighborhood",    required_argument,      nullptr,    'n'},
             {"noheur",          no_argument,            nullptr,    'h'},
             {"verbose",         no_argument,            nullptr,    'v'},
+            {"benchmark",       no_argument,            nullptr,    'b'},
             {nullptr,           0,                      nullptr,    0}
     };
 
@@ -64,7 +67,7 @@ bool parse_arguments(int argc, char **argv)
     int long_index = 0;
     while (true)
     {
-        int result = getopt_long(argc - 4, argv + 4, "t:a:n:hv", long_options, &long_index);
+        int result = getopt_long(argc - 4, argv + 4, "t:a:n:hvb", long_options, &long_index);
 
         if (result == -1)
         {
@@ -87,6 +90,9 @@ bool parse_arguments(int argc, char **argv)
             case 'v' :
                 VERBOSE = true;
                 break;
+            case 'b' :
+                BENCHMARK = true;
+                break;
             default  :
                 print_usage();
                 return false;
@@ -97,7 +103,7 @@ bool parse_arguments(int argc, char **argv)
     SOLUTION_PATH   = argv[2];
     if (! (TIME_LIMIT = std::stod(argv[3])))
     {
-        std::cerr << "Could not parse time-limit!" << std::endl;
+        std::cerr << "ERROR: Could not parse time-limit!" << std::endl;
         print_usage();
         return false;
     }
@@ -119,9 +125,9 @@ bool parse_arguments(int argc, char **argv)
         print_usage();
         return false;
     }
-    if (ALPHA < 0.0)
+    if (ALPHA <= 0.0)
     {
-        std::cerr << "ERROR: Invalid alpha (< 0.0)!" << std::endl;
+        std::cerr << "ERROR: Invalid alpha (<= 0.0)!" << std::endl;
         print_usage();
         return false;
     }
@@ -148,7 +154,14 @@ int main(int argc, char **argv)
     {
         std::vector<unsigned int> s = ScheduleGenerator::generate_precedence_list(instance);
         unsigned int c_s = ScheduleGenerator::earliest_start_schedule(instance, s);
-        std::cout << "Initial makespan:" << std::right << std::setw(4) << c_s << std::endl;
+        if (BENCHMARK)
+        {
+            std::cout << c_s << std::endl;
+        }
+        else
+        {
+            std::cout << "Initial makespan:" << std::right << std::setw(4) << c_s << std::endl;
+        }
         if (VERBOSE)
         {
             std::cout << std::endl;
@@ -157,7 +170,7 @@ int main(int argc, char **argv)
     }
     else
     {
-        SimulatedAnnealing sa = SimulatedAnnealing(TIME_LIMIT, ALPHA, TEMPERATURE, SEED, VERBOSE, NEIGHBORHOOD);
+        SimulatedAnnealing sa = SimulatedAnnealing(TIME_LIMIT, ALPHA, TEMPERATURE, SEED, VERBOSE, NEIGHBORHOOD, BENCHMARK);
         std::vector<unsigned int> s = sa.solve(instance);
         if (VERBOSE)
         {

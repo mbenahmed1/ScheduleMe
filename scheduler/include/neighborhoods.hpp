@@ -14,6 +14,7 @@ namespace ScheduleMe {
 
 class Neighborhoods {
     static bool swap_a_with_b(std::vector<unsigned int> &precedence_list, unsigned int idx_a, unsigned int idx_b, Instance& instance);
+    // static bool swap_a_with_b(std::vector<unsigned int> &precedence_list, unsigned int idx_a, unsigned int idx_b, Instance& instance);
 
     std::mt19937 mt_rand;
 
