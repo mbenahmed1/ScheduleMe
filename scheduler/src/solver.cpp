@@ -15,10 +15,10 @@ using namespace ScheduleMe;
 
 static std::string         INSTANCE_PATH;
 static std::string         SOLUTION_PATH;
-static long                TIME_LIMIT;
+static double              TIME_LIMIT;
 static unsigned int        SEED;
 
-static double              ALPHA               = 0.9999;
+static double              ALPHA               = 0.0;
 static double              TEMPERATURE         = 0.0;
 static std::string         NEIGHBORHOOD        = "swap";
 static bool                NOHEUR              = false;
@@ -35,7 +35,7 @@ void print_usage()
 
     std::cout << "OPTIONS:" << std::endl;
     std::cout << " --temp, -t           <double>, default=0.0 (initial temperature is calculated dependent on the given instance)" << std::endl;
-    std::cout << " --alpha, -a          <double>, default=0.999" << std::endl;
+    std::cout << " --alpha, -a          <double>, default=0.0 (alpha is calculated dependent on the approximately predicted total number of iterations)" << std::endl;
     std::cout << " --neighborhood, -n   <swap|api|shift|random>, default=swap" << std::endl;
     std::cout << " --noheur, -h         do not optimize the initial solution" << std::endl;
     std::cout << " --verbose, -v        print resource profile of solution" << std::endl;
@@ -95,7 +95,7 @@ bool parse_arguments(int argc, char **argv)
 
     INSTANCE_PATH   = argv[1];
     SOLUTION_PATH   = argv[2];
-    if (! (TIME_LIMIT = std::stol(argv[3])))
+    if (! (TIME_LIMIT = std::stod(argv[3])))
     {
         std::cerr << "Could not parse time-limit!" << std::endl;
         print_usage();
@@ -119,7 +119,7 @@ bool parse_arguments(int argc, char **argv)
         print_usage();
         return false;
     }
-    if (ALPHA <= 0.0)
+    if (ALPHA < 0.0)
     {
         std::cerr << "Invalid alpha <= 0!" << std::endl;
         print_usage();
