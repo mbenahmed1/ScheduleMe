@@ -2,30 +2,37 @@ import subprocess
 import multiprocessing
 import argparse
 import sys
-
-cpu_ct  = multiprocessing.cpu_count()   # Number of CPUs available on this system 
-
-def parse_args():
-    parser = argparse.ArgumentParser(add_help=False)
-    parser.add_argument('-h', '--help', action='help', default=argparse.SUPPRESS,
-                        help="Show help")
-    parser.add_argument('-s', '--solver', dest="SOLVER", type=str, required=True,
-                        help="<str> | Path to the executable of the solver")
-    parser.add_argument('-p', '--processes', dest="PROCESSES", type=int, default=1, required=False,
-                        help=("<int>, default=1 | Number of solver processes to be executed simultaneously. "
-                              "If you want to use all CPUs on your "
-                              "system (cpu_ct) set p <= 0 or p > cpu_ct")
-                        )
-    args = parser.parse_args()
-
-    if args.PROCESSES <= 0 or args.PROCESSES > cpu_ct:
-        args.processes = cpu_ct
-
-    return args
+import os
+import re
 
 if __name__ == "__main__":
-    args = parse_args()
+    cpu_ct  = multiprocessing.cpu_count()
 
-    print(args.SOLVER)
-    print(args.PROCESSES)
+    times               = [i for i in range(1, 31) if i % 5 == 0 or i == 1]
+    n_processes         = cpu_ct
+    n_processes         = 1
+    solver_path         = os.path.abspath("../scheduler/build/solver")
+    instances_path      = os.path.abspath("../instances/j120/")
+    instance_regex      = ".*\.RCP"
+    instance_regex      = "[A-Z][1-9]_.*\.RCP"
+    # instance_regex      = "[A-Z]+[5]|[1-9][5-9]_[0-9].RCP"
+
+    instances = []
+    for instance in os.listdir(instances_path):
+        if re.match(instance_regex, instance):
+            instances.append(instance)
+    nb_instances = len(instances)
+
+    print(f"times               {times}")
+    print(f"sum                 {sum(times)}")
+    print(f"n_processes         {n_processes}")
+    print(f"solver_path         {solver_path}")
+    print(f"instances_path      {instances_path}")
+    print(f"instance_regex      {instance_regex}")
+    print(f"nb_instances        {nb_instances}")
+
+
+    # print(command)
+    # sp = subprocess.Popen(command, shell=True)
+    # sp_gensdp = subprocess.Popen(command, shell=True, stdout=logfile_gensdp, stderr=logfile_gensdp, start_new_session=True)
 
