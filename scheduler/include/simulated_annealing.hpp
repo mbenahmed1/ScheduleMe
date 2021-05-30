@@ -19,10 +19,10 @@ class SimulatedAnnealing
 {
 
 public:
-    explicit SimulatedAnnealing(int time_limit, double alpha, double start_temp, unsigned int seed, bool verbose);
+    explicit SimulatedAnnealing(long time_limit, double alpha, double start_temp, unsigned int seed, bool verbose, std::string neighborhood);
 
     std::vector<unsigned int> solve(Instance &instance);
-
+   
     double get_alpha() const;
 
     double get_start_temp() const;
