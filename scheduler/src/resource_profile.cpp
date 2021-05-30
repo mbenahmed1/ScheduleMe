@@ -123,9 +123,10 @@ void ResourceProfile::print_resource_profiles() const
             }
             cout << endl;
         }
+        cout << "\u2F00\u2F00\u2F00";
         for (unsigned int i = 0; i < makespan; i++)
         {
-            cout << "\u2F00\u2F00";
+            cout << "\u2F00";
         }
         cout << ">" << endl << "  \u2595 ";
         for (unsigned int i = 0; i < makespan; i++)
@@ -133,7 +134,7 @@ void ResourceProfile::print_resource_profiles() const
             cout << i % 10 << " ";
         }
 
-        cout << endl;
+        cout << endl << endl;
     }
 
 }
