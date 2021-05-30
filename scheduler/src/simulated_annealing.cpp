@@ -3,28 +3,70 @@
 namespace ScheduleMe
 {
 
-SimulatedAnnealing::SimulatedAnnealing(int time_limit, double alpha, double start_temp, unsigned int seed, bool verbose) :
- nbh(seed), verbose(verbose), time_limit(time_limit), seed(seed),  alpha(alpha), start_temp(start_temp)
+SimulatedAnnealing::SimulatedAnnealing(long time_limit, double alpha, double start_temp, unsigned int seed, bool verbose, std::string neighborhood) :
+nbh(seed), verbose(verbose), time_limit(time_limit), seed(seed),  alpha(alpha), start_temp(start_temp), mt_rand(seed), dis(0.0,1.0), neighborhood(neighborhood)
 {
 }
 
 std::vector<unsigned int> SimulatedAnnealing::solve(Instance &instance)
 {
+    auto start = std::chrono::high_resolution_clock::now();
+    long time_spent = 0;
+
     // Current, neighbor, best solution and target function value
     std::vector<unsigned int>       s, s_dash, s_opt;
     unsigned int                    c_s, c_s_dash, c_s_opt;
+    double                          min, random;
 
     // Current temperature and iteration
     double      t_i     = this->start_temp;
     int         i       = 0;
 
-    // Init random generate with given seed
-    srand(this->seed);
-
     // Generate an inital solution s
     s = ScheduleGenerator::generate_precedence_list(instance);
     c_s = ScheduleGenerator::earliest_start_schedule(instance, s);
-    std::cout << "c_s_start " << c_s << std::endl;
+
+    // Calculate initial temperature
+    unsigned int lb1 = 0;
+    if (start_temp == 0.0)
+    {
+        for (unsigned int i = 0; i < instance.r(); i++)
+        {
+            double sum = 0.0;
+            for (unsigned int j = 0; j < instance.n(); j++)
+            {
+                sum += instance.demands[j][i] * instance.processing_time[j];
+            }
+            sum = std::ceil(sum / instance.resources[i]);
+            // std::cout << sum << std::endl;
+            if (sum > lb1)
+            {
+                lb1 = sum;
+            }
+        }
+        t_i = c_s - lb1;
+    }
+    std::cout << "Initial temperature: " << t_i << std::endl;
+    std::cout << "Initial makespan:" << std::right << std::setw(4) << c_s << std::endl;
+
+    // Which neighborhood shall we use
+    bool (Neighborhoods::*make_neighbor)(std::vector<unsigned int>&, Instance&);
+    if (neighborhood == "swap")
+    {
+        make_neighbor = &Neighborhoods::swap;
+    }
+    else if(neighborhood == "api")
+    {
+        make_neighbor = &Neighborhoods::api;
+    }
+    else if(neighborhood == "shift")
+    {
+        make_neighbor = &Neighborhoods::shift;
+    }
+    else if(neighborhood == "random")
+    {
+        make_neighbor = &Neighborhoods::random;
+    }
 
     // Initial best solution is the first one
     s_opt = s;
@@ -36,23 +78,21 @@ std::vector<unsigned int> SimulatedAnnealing::solve(Instance &instance)
     // Simulated annealing while time limit is not exceeded
     //time_t start_time = time(nullptr);
     //time_t time_spent = 0;
-    auto start = std::chrono::high_resolution_clock::now();
-    long time_spent = 0;
     while(time_spent < time_limit * 1000)
     {
-        print_progress(c_s_opt, i, t_i, time_spent);
 
         // Generate randomly a solution s_dash
         // c_s_dash = ScheduleGenerator::earliest_start_schedule(instance, s_dash);
         s_dash = s;
-        nbh.swap(s_dash, instance);
-        std::vector<unsigned int> tmp = s_dash;
-        c_s_dash = ScheduleGenerator::earliest_start_schedule(instance, tmp);
+        while(!(nbh.*make_neighbor)(s_dash, instance)) {}
+        c_s_dash = ScheduleGenerator::earliest_start_schedule(instance, s_dash);
 
         // If s_dash is better than the current solution or the threshold value 
         // allows a worse solution use s_dash in next step
-        double random = static_cast<double>(rand()) / RAND_MAX;
-        if(random < std::min(1.0, euler(c_s_dash, c_s, t_i)))
+        random = dis(mt_rand);
+        min = std::min(1.0, euler(c_s_dash, c_s, t_i));
+        print_progress(c_s_opt, c_s, i, t_i, time_spent, min);
+        if(random < min)
         {
             s = s_dash;
             c_s = c_s_dash;
