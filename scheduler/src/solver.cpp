@@ -11,45 +11,18 @@
 #include <iostream>
 #include <string>
 
-/*    if (argc > 2)
-    {
-        // instance and solution path
-        INSTANCE_PATH = argv[1];
-        SOLUTION_PATH = argv[2];
-
-        if (argc > 3)
-        {
-            TIME_LIMIT = std::stoi(argv[3]);
-        }
-        if (argc > 4)
-        {
-            SEED = std::stoi(argv[4]);
-        }
-        if (argc > 5)
-        {
-            for (int i = 6; i < argc; i++)
-            {
-
-            }
-        }
-    }
-    else
-    {
-        std::cout << "usage: ./solver <instance_path> <solution_path> [OPTIONS]" << std::endl;
-        return false;
-    }
-    return true;*/
-
 using namespace ScheduleMe;
 
-std::string INSTANCE_PATH;
-std::string SOLUTION_PATH;
-int TIME_LIMIT = 1;
-unsigned int SEED = 1;
-double ALPHA = 0.9;
-double TEMPERATURE = 1.0;
-bool NOHEUR = false;
-bool VERBOSE = false;
+static std::string         INSTANCE_PATH;
+static std::string         SOLUTION_PATH;
+static long                TIME_LIMIT;
+static unsigned int        SEED;
+
+static double              ALPHA               = 0.9999;
+static double              TEMPERATURE         = 0.0;
+static std::string         NEIGHBORHOOD        = "swap";
+static bool                NOHEUR              = false;
+static bool                VERBOSE             = false;
 
 bool parse_arguments(int, char **);
 
@@ -57,7 +30,15 @@ void print_usage();
 
 void print_usage()
 {
-    std::cout << "usage" << std::endl;
+    std::cout << "Usage" << std::endl;
+    std::cout << " ./solver <instance-path> <solution-path> <time-limit> <seed> [OPTION]...\n" << std::endl;
+
+    std::cout << "OPTIONS:" << std::endl;
+    std::cout << " --temp, -t           <double>, default=0.0 (initial temperature is calculated dependent on the given instance)" << std::endl;
+    std::cout << " --alpha, -a          <double>, default=0.999" << std::endl;
+    std::cout << " --neighborhood, -n   <swap|api|shift|random>, default=swap" << std::endl;
+    std::cout << " --noheur, -h         do not optimize the initial solution" << std::endl;
+    std::cout << " --verbose, -v        print resource profile of solution" << std::endl;
 }
 
 bool parse_arguments(int argc, char **argv)
@@ -65,21 +46,25 @@ bool parse_arguments(int argc, char **argv)
     //Specifying the expected options
     //The two options l and b expect numbers as argument
     static struct option long_options[] = {
-            {"timelimit", required_argument, nullptr, 't'},
-            {"temp",      required_argument, nullptr, 'c'},
-            {"seed",      required_argument, nullptr, 's'},
-            {"in",        required_argument, nullptr, 'i'},
-            {"out",       required_argument, nullptr, 'o'},
-            {"alpha",     required_argument, nullptr, 'a'},
-            {"noheur",    no_argument,       nullptr, 'n'},
-            {"verbose",   no_argument,       nullptr, 'v'},
-            {nullptr, 0,                     nullptr, 0}
+            {"temp",            required_argument,      nullptr,    't'},
+            {"alpha",           required_argument,      nullptr,    'a'},
+            {"neighborhood",    required_argument,      nullptr,    'n'},
+            {"noheur",          no_argument,            nullptr,    'h'},
+            {"verbose",         no_argument,            nullptr,    'v'},
+            {nullptr,           0,                      nullptr,    0}
     };
+
+    if (argc < 5)
+    {
+        std::cerr << "Not enough command line arguments given!" << std::endl;
+        print_usage();
+        return false;
+    }
 
     int long_index = 0;
     while (true)
     {
-        int result = getopt_long(argc, argv, "t:c:s:i:o:a:nv", long_options, &long_index);
+        int result = getopt_long(argc - 4, argv + 4, "t:a:n:hv", long_options, &long_index);
 
         if (result == -1)
         {
@@ -88,24 +73,15 @@ bool parse_arguments(int argc, char **argv)
         switch (result)
         {
             case 't' :
-                TIME_LIMIT = std::stoi(optarg);
-                break;
-            case 'c' :
                 TEMPERATURE = std::stod(optarg);
-                break;
-            case 's' :
-                SEED = std::stoul(optarg);
-                break;
-            case 'i' :
-                INSTANCE_PATH = optarg;
-                break;
-            case 'o' :
-                SOLUTION_PATH = optarg;
                 break;
             case 'a' :
                 ALPHA = std::stod(optarg);
                 break;
             case 'n' :
+                NEIGHBORHOOD = optarg;
+                break;
+            case 'h' :
                 NOHEUR = true;
                 break;
             case 'v' :
