@@ -151,32 +151,15 @@ double SimulatedAnnealing::next_temp(double t_i, int i) const
     // return t_i / (1 + std::log(1 + i));
 }
 
-void SimulatedAnnealing::print_progress(unsigned int c_s_opt, int step_count, double temp, long time_spent) const
+void SimulatedAnnealing::print_progress(unsigned int c_s_opt, unsigned int c_s, int step_count, double temp, long time_spent, double min) const
 {
-    // double progress = static_cast<double>(c_s_opt);
-    // int barWidth = 50;
-    // std::cout << "[";
-    // int pos = static_cast<int>(barWidth * progress);
-    // for (int i = 0; i < barWidth; ++i)
-    // {
-    //     if (i < pos)
-    //     {
-    //         std::cout << "=";
-    //     }
-    //     else if (i == pos)
-    //     {
-    //         std::cout << ">";
-    //     }
-    //     else
-    //     {
-    //         std::cout << " ";
-    //     }
-    // }
-    // std::cout << "] " << double(progress * 100.0) << " %\r";
-
-    std::cout << std::fixed << std::setprecision(5);
-    std::cout << "Step " << step_count << ", time spent " << time_spent << " t_i: " << temp << " c_s_opt: " << c_s_opt << "\r";
-    std::cout.flush();
+    std::cout   << std::fixed << std::setprecision(4);
+    std::cout   << "Optimal makespan:" << std::right << std::setw(4) << c_s_opt
+                << " | Current makespan: " << std::right << std::setw(4) << c_s
+                << " | Step: " << std::right << std::setw(8) << step_count
+                << " | Time spent:" << std::right << std::setw(9) << static_cast<double>(time_spent) / 1000.0
+                << " | Temperature:" << std::right << std::setw(9) << temp // << "\r" << std::flush;
+                << " | Current min:" << std::right << std::setw(8) << min << "\r" << std::flush;
 }
 
 } // namespace ScheduleMe
