@@ -89,7 +89,7 @@ bool parse_arguments(int argc, char **argv)
                 break;
             default  :
                 print_usage();
-                break;
+                return false;
         }
     }
 
@@ -103,31 +103,31 @@ bool parse_arguments(int argc, char **argv)
     }
     if (! (SEED = std::stoul(argv[4])))
     {
-        std::cerr << "Could not parse seed!" << std::endl;
+        std::cerr << "ERROR: Could not parse seed!" << std::endl;
         print_usage();
         return false;
     }
     if (TIME_LIMIT <= 0)
     {
-        std::cerr << "Invalid time-limit <= 0!" << std::endl;
+        std::cerr << "ERROR: Invalid time-limit (<= 0)!" << std::endl;
         print_usage();
         return false;
     }
     if (TEMPERATURE < 0.0)
     {
-        std::cerr << "Invalid temperature < 0!" << std::endl;
+        std::cerr << "ERROR: Invalid temperature (< 0.0)!" << std::endl;
         print_usage();
         return false;
     }
     if (ALPHA < 0.0)
     {
-        std::cerr << "Invalid alpha <= 0!" << std::endl;
+        std::cerr << "ERROR: Invalid alpha (< 0.0)!" << std::endl;
         print_usage();
         return false;
     }
     if (NEIGHBORHOOD != "swap" && NEIGHBORHOOD != "api" && NEIGHBORHOOD != "shift" && NEIGHBORHOOD != "random")
     {
-        std::cerr << "Invalid neighborhood!" << std::endl;
+        std::cerr << "ERROR: Invalid neighborhood!" << std::endl;
         print_usage();
         return false;
     }

@@ -100,7 +100,7 @@ std::vector<unsigned int> SimulatedAnnealing::solve(Instance &instance)
             // std::cout << total / 1000 << std::endl;
         }
         approx_i = time_limit / total;
-        alpha = std::pow(0.1 / t_i, 1.0 / approx_i);
+        alpha = std::pow(0.00001 / t_i, 1.0 / approx_i);
     }
 
     std::cout   << "Initial makespan:" << std::right << std::setw(4) << c_s 
