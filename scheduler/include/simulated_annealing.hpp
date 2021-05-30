@@ -35,15 +35,18 @@ private:
 
     double next_temp(double t_i, int i) const;
 
-    static double euler(unsigned int c_s_dash, unsigned int c_s, double t_i);
+    static double euler(double c_s_dash, double c_s, double t_i);
 
-    void print_progress(unsigned int c_opt, int step_count, double temp, long time_spent) const;
+    void print_progress(unsigned int c_opt, unsigned int c_s, int step_count, double temp, long time_spent, double min) const;
 
     bool verbose;
-    int time_limit;
+    long time_limit;
     unsigned int seed;
     double alpha;
     double start_temp;
+    std::mt19937 mt_rand;
+    std::uniform_real_distribution<double> dis;
+    std::string neighborhood;
 
 };
 
