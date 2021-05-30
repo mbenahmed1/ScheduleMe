@@ -117,8 +117,11 @@ std::vector<unsigned int> SimulatedAnnealing::solve(Instance &instance)
     return s_opt;
 }
 
-double SimulatedAnnealing::euler(unsigned int c_s_dash, unsigned int c_s, double t_i)
+double SimulatedAnnealing::euler(double c_s_dash, double c_s, double t_i)
 {
+    // std::cout << - (c_s_dash - c_s) << std::endl;
+    // std::cout << std::exp(- (c_s_dash - c_s) / t_i) << std::endl;
+    // std::cout << 1 / std::exp((c_s_dash - c_s) / t_i) << std::endl;
     return std::exp(- (c_s_dash - c_s) / t_i);
 }
 
