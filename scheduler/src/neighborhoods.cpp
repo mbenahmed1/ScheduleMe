@@ -3,54 +3,121 @@
 //
 
 #include "../include/neighborhoods.hpp"
-#include "../include/resource_profile.hpp"
 
 namespace ScheduleMe
 {
 
-Neighborhoods::Neighborhoods(unsigned int seed) {
-    std::srand(seed);
+Neighborhoods::Neighborhoods(unsigned int seed) : mt_rand(seed)
+{
 }
 
-void Neighborhoods::swap(std::vector<unsigned int> &precedenceList, Instance& instance)
+bool Neighborhoods::swap(std::vector<unsigned int> &precedence_list, Instance& instance)
 {
-    // if(precedenceList.at(28) == 28)
-    // {
-    //     precedenceList.at(28) = 29;
-    //     precedenceList.at(29) = 28;
-    // }
-    // else
-    // {
-    //     precedenceList.at(28) = 28;
-    //     precedenceList.at(29) = 29;
-    // }
-    // return;
-
     unsigned int idx_a = 0;
     unsigned int idx_b = 0;
     while (idx_a == idx_b)
     {
-        idx_a = static_cast<unsigned int>(rand()) % (precedenceList.size() - 2) + 1;
-        idx_b = static_cast<unsigned int>(rand()) % (precedenceList.size() - 2) + 1;
+        idx_a = static_cast<unsigned int>(mt_rand()) % (precedence_list.size() - 2) + 1;
+        idx_b = static_cast<unsigned int>(mt_rand()) % (precedence_list.size() - 2) + 1;
     }
 
-    if(swap_a_with_b(precedenceList, idx_a, idx_b, instance))
+    if(swap_a_with_b(precedence_list, idx_a, idx_b, instance))
     {
-        unsigned int temp = precedenceList.at(idx_a);
-        precedenceList.at(idx_a) = precedenceList.at(idx_b);
-        precedenceList.at(idx_b) = temp;
+        unsigned int temp = precedence_list.at(idx_a);
+        precedence_list.at(idx_a) = precedence_list.at(idx_b);
+        precedence_list.at(idx_b) = temp;
+        return true;
+    }
+    return false;
+}
+
+bool Neighborhoods::api(std::vector<unsigned int> &precedence_list, Instance& instance)
+{
+    unsigned int idx_a = 0;
+    unsigned int idx_b = 0;
+    idx_a = static_cast<unsigned int>(mt_rand()) % (precedence_list.size() - 3) + 1;
+    idx_b = idx_a + 1;
+
+    if(swap_a_with_b(precedence_list, idx_a, idx_b, instance))
+    {
+        unsigned int temp = precedence_list.at(idx_a);
+        precedence_list.at(idx_a) = precedence_list.at(idx_b);
+        precedence_list.at(idx_b) = temp;
+        return true;
+    }
+    return false;
+}
+
+bool Neighborhoods::shift(std::vector<unsigned int> &precedence_list, Instance& instance)
+{
+    unsigned int idx_a = 0;
+    unsigned int idx_b = 0;
+    while (idx_a == idx_b)
+    {
+        idx_a = static_cast<unsigned int>(mt_rand()) % (precedence_list.size() - 2) + 1;
+        idx_b = static_cast<unsigned int>(mt_rand()) % (precedence_list.size() - 2) + 1;
     }
 
+    if (idx_a > idx_b)
+    {
+        unsigned int tmp = idx_a;
+        idx_a = idx_b;
+        idx_b = tmp;
+    }
+
+    std::vector<unsigned int> copy = precedence_list;
+    for (; idx_a < idx_b; idx_a++)
+    {
+        unsigned int tmp = copy.at(idx_a);
+        copy.at(idx_a) = copy.at(idx_a + 1);
+        copy.at(idx_a + 1) = tmp;
+    }
+
+    if(check_precedence(copy, instance))
+    {
+        precedence_list = copy;
+        return true;
+    }
+    return false;
 }
 
-void Neighborhoods::shift(std::vector<unsigned int> &precedenceList, Instance& instance)
+bool Neighborhoods::random(std::vector<unsigned int> &precedence_list, Instance& instance)
 {
-
+    switch (static_cast<unsigned int>(mt_rand()) % 3)
+    {
+    case 0:
+        return swap(precedence_list, instance);
+    case 1:
+        return api(precedence_list, instance);
+    case 2:
+        return shift(precedence_list, instance);
+    default:
+        return api(precedence_list, instance);
+    }
 }
 
-void Neighborhoods::api(std::vector<unsigned int> &precedenceList, Instance& instance)
+bool Neighborhoods::swap_a_with_b(std::vector<unsigned int> &precedence_list, unsigned int idx_a, unsigned int idx_b, Instance &instance)
 {
+    std::vector<unsigned int> copy = precedence_list;
+    unsigned int temp = copy.at(idx_a);
+    copy.at(idx_a) = copy.at(idx_b);
+    copy.at(idx_b) = temp;
+    return check_precedence(copy, instance);
+}
 
+bool Neighborhoods::check_precedence(std::vector<unsigned int> &precedence_list, Instance &instance)
+{
+    for (unsigned int i = 0; i < precedence_list.size() - 1; i++)
+    {
+        for (unsigned int j = 0; j < instance.successors[precedence_list[i]].size(); j++)
+        {
+            if (! (std::find(precedence_list.begin() + i, precedence_list.end(), instance.successors[precedence_list[i]][j]) != precedence_list.end()))
+            {
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 // void Neighborhoods::swap(std::vector<unsigned int> &precedenceList, Instance& instance) {
@@ -68,33 +135,7 @@ void Neighborhoods::api(std::vector<unsigned int> &precedenceList, Instance& ins
 //     unsigned int temp = precedenceList.at(idx_a);
 //     precedenceList.at(idx_a) = precedenceList.at(idx_b);
 //     precedenceList.at(idx_b) = temp;
-
 // }
-
-bool Neighborhoods::swap_a_with_b(std::vector<unsigned int> &precedenceList, unsigned int idx_a, unsigned int idx_b, Instance &instance)
-{
-    std::vector<unsigned int> copy = precedenceList;
-    unsigned int temp = copy.at(idx_a);
-    copy.at(idx_a) = copy.at(idx_b);
-    copy.at(idx_b) = temp;
-    return checkPrecedence(copy, instance);
-}
-
-bool Neighborhoods::checkPrecedence(std::vector<unsigned int> &precedenceList, Instance &instance)
-{
-    for (unsigned int i = 0; i < precedenceList.size() - 1; i++)
-    {
-        for (unsigned int j = 0; j < instance.successors[precedenceList[i]].size(); j++)
-        {
-            if (! (std::find(precedenceList.begin() + i, precedenceList.end(), instance.successors[precedenceList[i]][j]) != precedenceList.end()))
-            {
-                return false;
-            }
-        }
-    }
-    return true;
-}
-
 // bool Neighborhoods::swap_a_with_b(std::vector<unsigned int> &precedenceList, unsigned int idx_a, unsigned int idx_b,
 //                              ScheduleMe::Instance& instance) {
 //     // set a to be the idx that is scheduled first and b to the last one
@@ -130,7 +171,4 @@ bool Neighborhoods::checkPrecedence(std::vector<unsigned int> &precedenceList, I
 //     return isOk;
 // }
 
-
-
 } // namespace ScheduleMe
-
