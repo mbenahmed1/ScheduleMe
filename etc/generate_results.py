@@ -116,8 +116,8 @@ if __name__ == "__main__":
                 for s in seeds:
                     sol = os.path.join(solutions_path, instance_names[i])
                     time = int(t * 1000)
-                    command = f"{solver_path} {inst} {sol}_n{nbh}_t{int(time)}_s{s}.sol {t} {s} -n {nbh} -b"
-                    # command = f"{solver_path} {inst} {sol}_n{nbh}_t{int(time)}_s{s}.sol {t} {s} -n {nbh} -b -l {sol}_n{nbh}_t{int(time)}_s{s}.lol"
+                    # command = f"{solver_path} {inst} {sol}_n{nbh}_t{int(time)}_s{s}.sol {t} {s} -n {nbh} -b"
+                    command = f"{solver_path} {inst} {sol}_n{nbh}_t{time}_s{s}.sol {t} {s} -n {nbh} -b -p"
                     # print(command)
                     p.append(sp.Popen(command, shell=True, stdout=sp.PIPE))
 

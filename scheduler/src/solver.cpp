@@ -183,10 +183,10 @@ int main(int argc, char **argv)
             std::cout << std::endl;
             ScheduleGenerator::earliest_start_schedule(instance, s, true);
         }
-        if (PLOT)
-        {
-            instance.write_plotable(SOLUTION_PATH);
-        }
+    }
+    if (PLOT)
+    {
+        instance.write_plotable(SOLUTION_PATH);
     }
     ScheduleMe::write_solution(instance.start_time, SOLUTION_PATH);    
 }

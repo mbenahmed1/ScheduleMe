@@ -96,7 +96,7 @@ bool Neighborhoods::random(std::vector<unsigned int> &precedence_list, Instance&
     case 2:
         return shift(precedence_list, instance);
     default:
-        return api(precedence_list, instance);
+        return swap(precedence_list, instance);
     }
 }
 
