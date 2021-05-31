@@ -1,6 +1,16 @@
 # Solutions directory
 solutions
 
+# tex
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.nav
+*.snm
+*.synctex.gz
+*.toc
+
 # vscode
 .vscode
 
