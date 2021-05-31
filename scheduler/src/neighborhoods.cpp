@@ -42,7 +42,7 @@ bool Neighborhoods::api(std::vector<unsigned int> &precedence_list, Instance& in
     idx_a = static_cast<unsigned int>(mt_rand()) % (precedence_list.size() - 3) + 1;
     idx_b = idx_a + 1;
 
-    if(swap_a_with_b(precedence_list, idx_a, idx_b, instance))
+    if(swap_a_with_b_fast(precedence_list, idx_a, idx_b, instance))
     {
         unsigned int temp = precedence_list.at(idx_a);
         precedence_list.at(idx_a) = precedence_list.at(idx_b);
