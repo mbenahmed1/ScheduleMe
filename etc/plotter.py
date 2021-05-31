@@ -33,9 +33,7 @@ Example:
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 import sys
-from matplotlib.pyplot import cycler
 import numpy as np
-import matplotlib
 import time
 
 
@@ -152,11 +150,6 @@ def check_overlap(rect_a: Rectangle, rect_b: Rectangle) -> bool:
     a_y_top_right = a_y_bottom_right + rect_a.get_height()
     b_y_top_right = b_y_bottom_right + rect_b.get_height()
 
-    a_x_top_left = a_x_bottom_left
-    b_x_top_left = b_x_bottom_left
-    a_y_top_left = a_y_bottom_left + rect_a.get_height()
-    b_y_top_left = b_y_bottom_left + rect_b.get_height()
-
     return not (a_x_top_right <= b_x_bottom_left or a_x_bottom_left >= b_x_top_right or a_y_top_right <= b_y_bottom_left or a_y_bottom_left >= b_y_top_right)
 
 
@@ -173,7 +166,6 @@ def parse_files(sol_path: str) -> None:
     """
     caps = []
     end_times = []
-    rects = []
 
     with open(sol_path) as s_file:
         lines = s_file.readlines()
@@ -182,7 +174,7 @@ def parse_files(sol_path: str) -> None:
         num_act = int(first[0])
         num_rsc = int(first[1])
         colors = plt.cm.Pastel2(np.linspace(0, 1, num_act))
-        fig, ax = plt.subplots(num_rsc, figsize=(12,9))
+        fig, ax = plt.subplots(num_rsc, figsize=(12, 9))
 
         second = lines[1]
         second = second.split()
@@ -241,13 +233,15 @@ def parse_files(sol_path: str) -> None:
                                  fontsize=8, ha='center', va='center')
 
         y_range = range(0, max(caps), 1)
-        x_range = range(0, max(end_times), 1)
+        x_range = range(0, max(end_times) + 1, 1)
         for i, a in enumerate(ax):
             a.title.set_text(f'Resource {i}')
             a.set(xlim=(-0.1, max(end_times) + 1), ylim=(-0.1,
                                                          max(caps) + 1), yticks=y_range, xticks=x_range)
             a.axline((-0.1, caps[i]), (max(end_times),
                                        caps[i]), ls='--', lw=1.5, color='black')
+            a.axvline(x=max(end_times), ls='--', lw=1.5, color='red')
+        fig.canvas.set_window_title(f'Plot of {sol_path} - Makespan: {max(end_times)}')
 
 
 if __name__ == "__main__":

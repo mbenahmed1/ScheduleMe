@@ -85,10 +85,30 @@ Instance read_instance(std::istream& is)
     instance.predecessors_full.resize(instance.n());
     instance.predecessors_full_rec(std::vector<unsigned int>(), 0);
 
+    instance.successors_full.resize(instance.n());
+    instance.successors_full_rec(std::vector<unsigned int>(), instance.n()-1);
+
     for (unsigned int i = 0; i < instance.n(); i++)
     {
         std::sort(instance.predecessors_full[i].begin(), instance.predecessors_full[i].end());
+        std::sort(instance.successors_full[i].begin(), instance.successors_full[i].end());
     }
+
+    /*for (int i = 0; i < instance.predecessors_full.size(); ++i) {
+        std::cout << i << ": ";
+        for (int j = 0; j < instance.predecessors_full.at(i).size(); ++j) {
+            std::cout << instance.predecessors_full[i][j] << ", ";
+        }
+        std::cout << std::endl;
+    }
+
+    for (int i = 0; i < instance.successors_full.size(); ++i) {
+        std::cout << i << ": ";
+        for (int j = 0; j < instance.successors_full.at(i).size(); ++j) {
+            std::cout << instance.successors_full[i][j] << ", ";
+        }
+        std::cout << std::endl;
+    }*/
 
     return instance;
 }
