@@ -31,6 +31,8 @@ struct Instance {
 
     std::vector<std::vector<unsigned int>> predecessors_full;
 
+    std::vector<std::vector<unsigned int>> successors_full;
+
     std::vector<std::vector<unsigned int>> predecessors;
 
     std::size_t n() const { return processing_time.size(); }
@@ -59,6 +61,31 @@ struct Instance {
         for (unsigned int i = 0; i < successors[index].size(); i++)
         {
             predecessors_full_rec(predecessor_list, successors[index][i]);
+        }
+    }
+
+    void successors_full_rec(std::vector<unsigned int> successor_list, unsigned int index)
+    {
+        if (successors_full[index].size() != 0)
+        {
+            for (unsigned int i = 0; i < successor_list.size(); i++)
+            {
+                if (! (std::find(successors_full[index].begin(), successors_full[index].end(), successor_list[i]) != successors_full[index].end()) )
+                {
+                    successors_full[index].push_back(successor_list[i]);
+                }
+            }
+        }
+        else
+        {
+            successors_full[index] = successor_list;
+        }
+
+        successor_list.push_back(index);
+
+        for (unsigned int i = 0; i < predecessors[index].size(); i++)
+        {
+            successors_full_rec(successor_list, predecessors[index][i]);
         }
     }
 
