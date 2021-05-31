@@ -42,7 +42,8 @@ bool Neighborhoods::api(std::vector<unsigned int> &precedence_list, Instance& in
     idx_a = static_cast<unsigned int>(mt_rand()) % (precedence_list.size() - 3) + 1;
     idx_b = idx_a + 1;
 
-    if(swap_a_with_b_fast(precedence_list, idx_a, idx_b, instance))
+    /*if(swap_a_with_b_fast(precedence_list, idx_a, idx_b, instance))*/
+    if (!is_b_successor_of_a(instance, precedence_list.at(idx_a), precedence_list.at(idx_b)))
     {
         unsigned int temp = precedence_list.at(idx_a);
         precedence_list.at(idx_a) = precedence_list.at(idx_b);
@@ -68,17 +69,20 @@ bool Neighborhoods::shift(std::vector<unsigned int> &precedence_list, Instance& 
         idx_a = idx_b;
         idx_b = tmp;
     }
+    //unsigned int ac = idx_a;
+    //unsigned int bc = idx_b;
 
-    std::vector<unsigned int> copy = precedence_list;
-    for (; idx_a < idx_b; idx_a++)
-    {
-        unsigned int tmp = copy.at(idx_a);
-        copy.at(idx_a) = copy.at(idx_a + 1);
-        copy.at(idx_a + 1) = tmp;
-    }
 
-    if(check_precedence(copy, instance))
-    {
+    std::vector<unsigned int> to_check = std::vector<unsigned int>(precedence_list.begin() + idx_a, precedence_list.begin() + idx_b +1);
+    std::sort(to_check.begin(), to_check.end());
+    if (check_later_schedule(instance, to_check, precedence_list.at(idx_a))) {
+        std::vector<unsigned int> copy = precedence_list;
+        for (; idx_a < idx_b; idx_a++)
+        {
+            unsigned int tmp = copy.at(idx_a);
+            copy.at(idx_a) = copy.at(idx_a + 1);
+            copy.at(idx_a + 1) = tmp;
+        }
         precedence_list = copy;
         return true;
     }
@@ -141,52 +145,69 @@ bool Neighborhoods::check_precedence(std::vector<unsigned int> &precedence_list,
 //     precedence_list.at(idx_b) = temp;
 // }
 
- bool Neighborhoods::swap_a_with_b_fast(std::vector<unsigned int> &precedence_list, unsigned int idx_a, unsigned int idx_b, Instance &instance) {
-     // set a to be the idx that is scheduled first and b to the last one
-     unsigned int temp = idx_a;
-     idx_a = idx_a < idx_b ? idx_a : idx_b;
-     idx_b = temp < idx_b ? idx_b : temp;
+    bool Neighborhoods::swap_a_with_b_fast(std::vector<unsigned int> &precedence_list, unsigned int idx_a, unsigned int idx_b, Instance &instance) {
+         // set a to be the idx that is scheduled first and b to the last one
+         unsigned int temp = idx_a;
+         idx_a = idx_a < idx_b ? idx_a : idx_b;
+         idx_b = temp < idx_b ? idx_b : temp;
 
-     /* a is scheduled first so to schedule it later there should be no problem
-     only b has to be proven to maintain the priorities (only activities between a and b has to be checked)
+         /* a is scheduled first so to schedule it later there should be no problem
+         only b has to be proven to maintain the priorities (only activities between a and b has to be checked)
 
-      to do so sort the activities to be  checked and the predecessors of idx_b to then campare if they have any
-      element in common
-      */
-     std::vector<unsigned int> to_check = std::vector<unsigned int>(precedence_list.begin() + idx_a, precedence_list.begin() + idx_b);
-     std::sort(to_check.begin(), to_check.end());
+          to do so sort the activities to be  checked and the predecessors of idx_b to then campare if they have any
+          element in common
+          */
+         std::vector<unsigned int> to_check = std::vector<unsigned int>(precedence_list.begin() + idx_a, precedence_list.begin() + idx_b);
+         std::sort(to_check.begin(), to_check.end());
 
-     unsigned int ptr1 = 0;
-     unsigned int ptr2 = 0;
-
-     while (ptr1 < to_check.size() && ptr2 < instance.predecessors_full.at(precedence_list.at(idx_b)).size()) {
-         // std::cout << "ptr1: " << ptr1 << "\t";
-         // std::cout << "ptr2: " << ptr2 << std::endl;
-         if (to_check.at(ptr1) == instance.predecessors_full.at(precedence_list.at(idx_b)).at(ptr2)) {
-             return false;
-         }
-         else if (to_check.at(ptr1) < instance.predecessors_full.at(precedence_list.at(idx_b)).at(ptr2)) {
-             ptr1++;
-         } else {
-             ptr2++;
-         }
+        if (check_earlier_schedule(instance, to_check, precedence_list.at(idx_b)))
+            return check_later_schedule(instance, to_check, precedence_list.at(idx_a));
+        return false;
      }
 
-     ptr1 = 0;
-     ptr2 = 0;
-     while (ptr1 < to_check.size() && ptr2 < instance.successors_full.at(precedence_list.at(idx_a)).size()) {
-         // std::cout << "ptr1: " << ptr1 << "\t";
-         // std::cout << "ptr2: " << ptr2 << std::endl;
-         if (to_check.at(ptr1) == instance.successors_full.at(precedence_list.at(idx_a)).at(ptr2)) {
-             return false;
-         }
-         else if (to_check.at(ptr1) < instance.successors_full.at(precedence_list.at(idx_a)).at(ptr2)) {
-             ptr1++;
-         } else {
-             ptr2++;
-         }
-     }
-     return true;
- }
+    bool Neighborhoods::check_earlier_schedule(const Instance& instance, const std::vector<unsigned int> &precedence_list, unsigned int activity) {
+        unsigned int ptr1 = 0;
+        unsigned int ptr2 = 0;
+
+        while (ptr1 < precedence_list.size() && ptr2 < instance.predecessors_full.at(activity).size()) {
+
+            if (precedence_list.at(ptr1) == instance.predecessors_full.at(activity).at(ptr2)) {
+                return false;
+            }
+            else if (precedence_list.at(ptr1) < instance.predecessors_full.at(activity).at(ptr2)) {
+                ptr1++;
+            } else {
+                ptr2++;
+            }
+        }
+
+        return true;
+    }
+
+    bool Neighborhoods::check_later_schedule(const Instance& instance, const std::vector<unsigned int> &precedence_list, unsigned int activity) {
+        unsigned int ptr1 = 0;
+        unsigned int ptr2 = 0;
+
+        while (ptr1 < precedence_list.size() && ptr2 < instance.successors_full.at(activity).size()) {
+
+            if (precedence_list.at(ptr1) == instance.successors_full.at(activity).at(ptr2)) {
+                return false;
+            }
+            else if (precedence_list.at(ptr1) < instance.successors_full.at(activity).at(ptr2)) {
+                ptr1++;
+            } else {
+                ptr2++;
+            }
+        }
+        return true;
+    }
+
+    bool Neighborhoods::is_b_successor_of_a(const Instance &instance, unsigned int activity_a, unsigned int activity_b) {
+        for (unsigned int i : instance.successors_full.at(activity_a)) {
+            if (activity_b == i)
+                return true;
+        }
+        return false;
+    }
 
 } // namespace ScheduleMe
