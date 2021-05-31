@@ -241,7 +241,7 @@ def parse_files(sol_path: str) -> None:
             a.axline((-0.1, caps[i]), (max(end_times),
                                        caps[i]), ls='--', lw=1.5, color='black')
             a.axvline(x=max(end_times), ls='--', lw=1.5, color='red')
-        fig.canvas.set_window_title(f'Plot of {sol_path} - makespan: {max(end_times)}')
+        fig.canvas.set_window_title(f'Plot of {sol_path} - Makespan: {max(end_times)}')
 
 
 if __name__ == "__main__":
