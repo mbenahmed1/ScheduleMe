@@ -81,6 +81,6 @@ axes[1].set(ylim=(0.0, 20), title="SWAP", xlabel="Instanz", ylabel="Abweichung z
 # sea.map(sns.barplot, "instance", "makespan",
 #         order = ["j30", "j60", "j120"])
 
-
+plt.tight_layout()
 plt.show()
 
