@@ -17,7 +17,7 @@ add_compile_options(
 #--------------------------------------------------------------------
 
 
-add_subdirectory(../uosrcp ${CMAKE_CURRENT_BINARY_DIR}/uosrcp)
+add_subdirectory(../scheduler ${CMAKE_CURRENT_BINARY_DIR}/src)
 
 
 #--------------------------------------------------------------------
