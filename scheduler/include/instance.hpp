@@ -63,7 +63,8 @@ struct Instance {
     }
 
     void write_plotable(std::string path)
-    {
+    {   
+        path = path + ".plot";
         std::ofstream s(path);
         if (s.is_open())
         {

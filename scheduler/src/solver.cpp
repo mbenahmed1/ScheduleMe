@@ -24,6 +24,7 @@ static std::string         NEIGHBORHOOD         = "swap";
 static bool                NOHEUR               = false;
 static bool                VERBOSE              = false;
 static bool                BENCHMARK            = false;
+static bool                PLOT                 = false;
 
 bool parse_arguments(int, char **);
 
@@ -41,6 +42,7 @@ void print_usage()
     std::cout << " --noheur, -h         do not optimize the initial solution" << std::endl;
     std::cout << " --verbose, -v        print resource profile of solution" << std::endl;
     std::cout << " --benchmark, -b      only print optimal makespan and nothing else" << std::endl;
+    std::cout << " --plot, -p           create .PLOT file for plotter in the same directory as solution" << std::endl;
 }
 
 bool parse_arguments(int argc, char **argv)
@@ -54,6 +56,7 @@ bool parse_arguments(int argc, char **argv)
             {"noheur",          no_argument,            nullptr,    'h'},
             {"verbose",         no_argument,            nullptr,    'v'},
             {"benchmark",       no_argument,            nullptr,    'b'},
+            {"plot",            no_argument,            nullptr,    'p'},
             {nullptr,           0,                      nullptr,    0}
     };
 
@@ -67,7 +70,7 @@ bool parse_arguments(int argc, char **argv)
     int long_index = 0;
     while (true)
     {
-        int result = getopt_long(argc - 4, argv + 4, "t:a:n:hvb", long_options, &long_index);
+        int result = getopt_long(argc - 4, argv + 4, "t:a:n:hvbp", long_options, &long_index);
 
         if (result == -1)
         {
@@ -92,6 +95,9 @@ bool parse_arguments(int argc, char **argv)
                 break;
             case 'b' :
                 BENCHMARK = true;
+                break;
+            case 'p' :
+                PLOT = true;
                 break;
             default  :
                 print_usage();
@@ -177,10 +183,11 @@ int main(int argc, char **argv)
             std::cout << std::endl;
             ScheduleGenerator::earliest_start_schedule(instance, s, true);
         }
+        if (PLOT)
+        {
+            instance.write_plotable(SOLUTION_PATH);
+        }
     }
-
-    ScheduleMe::write_solution(instance.start_time, SOLUTION_PATH);
-
-    instance.write_plotable("./test.lol");
+    ScheduleMe::write_solution(instance.start_time, SOLUTION_PATH);    
 }
 
