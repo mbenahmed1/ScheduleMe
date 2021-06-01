@@ -3,6 +3,12 @@ import matplotlib as mpl
 import seaborn as sns
 import pandas as pd
 
+font = {
+    "family"    : "normal",
+    "size"      : "15"
+}
+mpl.rc("font", **font)
+
 #sns.set()
 
 #sns.set_style("darkgrid")
@@ -62,7 +68,7 @@ print(j_time.head(10))
 
 #sns.barplot(x=j30_avgseed.instance_nr, y=j30_avgseed.makespan, hue=j30_avgseed.time)
 
-fig, axes = plt.subplots(1, 2, figsize=(18, 10))
+fig, axes = plt.subplots(1, 2)
 
 api = j_time.loc[j_time["nbh"]=="api"]
 swap = j_time.loc[j_time["nbh"]=="swap"]

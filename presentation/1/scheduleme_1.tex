@@ -187,7 +187,7 @@ Universität Osnabrück \\ % Your institution for the title page
 			\item Schedule Generation Scheme
 			\begin{itemize}
 				\item Earliest Start Schedule
-				\item Ressource Profile
+				\item Ressourcenprofile
 			\end{itemize}
 			\item Metaheuristik
 			\begin{itemize}
@@ -202,25 +202,55 @@ Universität Osnabrück \\ % Your institution for the title page
   
 %------------------------------------------------
 
-\begin{frame}
+\begin{frame}[c]
 \frametitle{ScheduleMe - Simulated Annealing}
-\centering
-\begin{columns}[c] % The "c" option specifies centered vertical alignment while the "t" option is used for top vertical alignment
-	
-	\column{.2\textwidth} % Left column and width
-	\Large
-	\textbf{Abkühlfaktor}\\
-	\LARGE
-	$i_{\sim} = \frac{t_{max}}{t_{\Delta}}$
-	
-	\column{.3\textwidth} % Right column and width
-	\Large
-	\textbf{Starttemperatur}\\
-	\LARGE
-	$a_{\sim} = \sqrt[i_{\sim}]{\frac{x}{T_{init}}}$
+	\centering
 
-	
-\end{columns}
+	\Large
+	\vspace{-16pt}
+	\textbf{SA Parameter?}
+	\vspace{10pt}
+
+	\begin{columns}[t]
+		
+		\column{.49\textwidth}
+			\centering
+			\large
+			\textbf{Initiale Temperatur}\\
+			\vspace{20pt}
+			$T_{initial} = c(s_{initial}) - LB_1$
+			\vspace{12pt}
+			\small
+			\begin{itemize}
+				\item Abhängig vom Makespan der initialen Lösung und $LB_1$ der Instanz
+				\item $LB_1$ ignoriert Vorrangsbeziehungen und füllt die Ressourcen
+			\end{itemize}
+
+%		\column{.32\textwidth}
+%			\centering
+%			\large
+%			\textbf{Iterationen gesamt}\\
+%			\vspace{10pt}
+%			$I \approx \frac{t_{max}}{t_{\Delta_{i}}}$
+%			\vspace{10pt}
+%			\begin{itemize}
+%				\item 
+%			\end{itemize}
+		
+		\column{.49\textwidth}
+			\centering
+			\large
+			\textbf{Abkühlungsfaktor}\\
+			\vspace{10pt}
+			$\alpha = \sqrt[I]{\frac{x}{T_{initial}}}$
+			\vspace{12pt}
+			\small
+			\begin{itemize}
+				\item $I$ ist die Anzahl der Iterationen, die anhand des Zeitlimits abgeschätzt werden kann
+				\item $\alpha$ wird so berechnet, dass die Temperatur bei Ablauf der Zeit gegen 0 konvergiert ($x \approx 0$)
+			\end{itemize}
+			
+	\end{columns}
 \end{frame}
 
 %------------------------------------------------
@@ -361,10 +391,10 @@ Universität Osnabrück \\ % Your institution for the title page
 
 \begin{frame}[t]
 	\frametitle{ScheduleMe - Ergebnisse}
-	\vspace{-10pt}
+	\vspace{-12pt}
 	\begin{figure}
 		\centering
-		\includegraphics[scale=0.25]{result1.pdf}
+		\includegraphics[scale=0.55]{result1.pdf}
 	\end{figure}	
 \end{frame}
 
