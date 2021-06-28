@@ -22,8 +22,8 @@ ScheduleGenerator::earliest_start_schedule(Instance &instance, const std::vector
         // calculate start time for j
         for (unsigned int i = 0; i < instance.predecessors[j].size(); i++)
         {
-            unsigned int sum = instance.start_time.at(instance.predecessors[j][i]) +
-                               instance.processing_time.at(instance.predecessors[j][i]);
+            unsigned int sum = instance.start_time[instance.predecessors[j][i]] +
+                               instance.processing_time[instance.predecessors[j][i]];
             if (sum > t)
             {
                 t = sum;
@@ -35,7 +35,7 @@ ScheduleGenerator::earliest_start_schedule(Instance &instance, const std::vector
             t += 1;
         }
         rp.schedule_at(t, j);
-        instance.start_time.at(j) = t;
+        instance.start_time[j] = t;
 
         unsigned int completion_time = t + instance.processing_time[j];
         if (completion_time > makespan)

@@ -14,26 +14,26 @@ ResourceProfile::ResourceProfile(Instance &instance) : instance(instance)
 
 unsigned int ResourceProfile::get_available_capacity(unsigned int time, unsigned int resource) const
 {
-    if (time >= profiles.at(resource).size())
+    if (time >= profiles[resource].size())
     {
-        return instance.resources.at(resource);
+        return instance.resources[resource];
     }
-    unsigned int max_capacity = instance.resources.at(resource);
-    unsigned int current_capacity = profiles.at(resource).at(time);
+    unsigned int max_capacity = instance.resources[resource];
+    unsigned int current_capacity = profiles[resource][time];
 
     return max_capacity - current_capacity;
 }
 
 bool ResourceProfile::is_schedulable(unsigned int start_time, unsigned int activity) const
 {
-    if (start_time >= profiles.at(0).size())
+    if (start_time >= profiles[0].size())
     {
         return true;
     }
-    unsigned int processing_time = instance.processing_time.at(activity);
+    unsigned int processing_time = instance.processing_time[activity];
     for (unsigned int r = 0; r < instance.r(); r++)
     {
-        unsigned int activity_demands = instance.demands.at(activity).at(r);
+        unsigned int activity_demands = instance.demands[activity][r];
         for (unsigned int t = start_time; t < start_time + processing_time; t++)
         {
             if (get_available_capacity(t, r) < activity_demands)
@@ -50,9 +50,9 @@ void ResourceProfile::schedule_at(unsigned int start_time, unsigned int activity
 
     for (unsigned int r = 0; r < profiles.size(); r++)
     {
-        std::vector<unsigned int> &current_profile = profiles.at(r);
-        unsigned int processing_time = instance.processing_time.at(activity);
-        unsigned int activity_demands = instance.demands.at(activity).at(r);
+        std::vector<unsigned int> &current_profile = profiles[r];
+        unsigned int processing_time = instance.processing_time[activity];
+        unsigned int activity_demands = instance.demands[activity][r];
         unsigned int completion_time = start_time + processing_time;
 
         if (completion_time > current_profile.size())
@@ -62,7 +62,7 @@ void ResourceProfile::schedule_at(unsigned int start_time, unsigned int activity
 
         for (unsigned int i = start_time; i < completion_time; i++)
         {
-            current_profile.at(i) += activity_demands;
+            current_profile[i] += activity_demands;
         }
 
     }
@@ -73,8 +73,8 @@ void ResourceProfile::print_resource_profiles() const
     using namespace std;
     for (unsigned int r = 0; r < profiles.size(); r++)
     {
-        unsigned int capacity = instance.resources.at(r);
-        unsigned int makespan = profiles.at(r).size();
+        unsigned int capacity = instance.resources[r];
+        unsigned int makespan = profiles[r].size();
         cout << "Resource: " << r << " Capacity: " << capacity << endl;
 
         std::vector<std::vector<unsigned int>> draw_matrix;
@@ -90,9 +90,9 @@ void ResourceProfile::print_resource_profiles() const
         {
             // fill up to current capacity
 
-            for (unsigned int j = 0; j < draw_matrix.at(i).size(); j++)
+            for (unsigned int j = 0; j < draw_matrix[i].size(); j++)
             {
-                unsigned int fill = profiles.at(r).at(j);
+                unsigned int fill = profiles[r][j];
                 if (i >= draw_matrix.size() - fill)
                 {
                     draw_matrix[i][j] = 1;
@@ -109,7 +109,7 @@ void ResourceProfile::print_resource_profiles() const
                 cout << " ";
             }
             cout << capacity - i << "\u2595 ";
-            for (unsigned int j = 0; j < draw_matrix.at(i).size(); j++)
+            for (unsigned int j = 0; j < draw_matrix[i].size(); j++)
             {
                 if (draw_matrix[i][j] == 0)
                 {
@@ -141,11 +141,11 @@ void ResourceProfile::print_resource_profiles() const
 
 unsigned int ResourceProfile::get_used_capacity(unsigned int time, unsigned int resource) const
 {
-    if (time >= profiles.at(0).size())
+    if (time >= profiles[0].size())
     {
         return 0;
     }
-    return profiles.at(resource).at(time);
+    return profiles[resource][time];
 }
 
 
