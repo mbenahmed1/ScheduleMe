@@ -34,6 +34,10 @@ bool ResourceProfile::is_schedulable(unsigned int start_time, unsigned int activ
     for (unsigned int r = 0; r < instance.r(); r++)
     {
         unsigned int activity_demands = instance.demands[activity][r];
+        if (activity_demands == 0)
+        {
+            continue;
+        }
         for (unsigned int t = start_time; t < start_time + processing_time; t++)
         {
             if (get_available_capacity(t, r) < activity_demands)
