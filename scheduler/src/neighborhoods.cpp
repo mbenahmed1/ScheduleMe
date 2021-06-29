@@ -201,16 +201,8 @@ bool Neighborhoods::check_precedence(std::vector<unsigned int> &precedence_list,
     }
 
     bool Neighborhoods::is_b_successor_of_a(const Instance &instance, unsigned int activity_a, unsigned int activity_b) {
-        // self implemented std::find
-        /* for (unsigned int i : instance.successors_full.at(activity_a)) {
-            if (activity_b == i)
-                return true;
-        }
-        return false;*/
-        // std::find: small vectors, so maybe caching is faster than bin serach?
-        return end(instance.successors_full[activity_a]) != std::find(begin(instance.successors_full[activity_a]), end(instance.successors_full[activity_a]), activity_b);
         // bin search: better complexity, but worse cache usage?
-        //return std::binary_search(begin(instance.successors_full.at(activity_a)), end(instance.successors_full.at(activity_a)), activity_b);
+        return std::binary_search(begin(instance.successors_full[activity_a]), end(instance.successors_full[activity_a]), activity_b);
 
     }
 } // namespace ScheduleMe

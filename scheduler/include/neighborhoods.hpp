@@ -48,7 +48,6 @@ class Neighborhoods {
 
     /**
      * checks, if the activity a is a successor of activity b
-     * TODO: check which variant is faster
      *
      * @param instance the instance to be checked for
      * @param activity_a a activity in the precedence list
