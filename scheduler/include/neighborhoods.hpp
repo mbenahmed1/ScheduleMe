@@ -46,10 +46,16 @@ class Neighborhoods {
      */
     static bool check_later_schedule(const Instance& instance, const std::vector<unsigned int> &precedence_list_part, unsigned int activity);
 
+    /**
+     * checks, if the activity a is a successor of activity b
+     * TODO: check which variant is faster
+     *
+     * @param instance the instance to be checked for
+     * @param activity_a a activity in the precedence list
+     * @param activity_b a activity in the precedence list
+     * @return true if b is a successor of a, false else
+     */
     static bool is_b_successor_of_a(const Instance& instance, unsigned int activity_a, unsigned int activity_b);
-
-
-
 
     std::mt19937 mt_rand;
 
