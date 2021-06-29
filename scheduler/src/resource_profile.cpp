@@ -10,6 +10,7 @@ namespace ScheduleMe
 ResourceProfile::ResourceProfile(Instance &instance) : instance(instance)
 {
     profiles.resize(instance.r());
+    max_profiles.resize(instance.r());
 }
 
 unsigned int ResourceProfile::get_available_capacity(unsigned int time, unsigned int resource) const
@@ -38,6 +39,21 @@ bool ResourceProfile::is_schedulable(unsigned int start_time, unsigned int activ
         {
             continue;
         }
+
+        bool schedulable = true;
+
+        for (unsigned int t = start_time/10; t <= (start_time + processing_time)/10; t += 10)
+        {
+            if (instance.resources[r] - max_profiles[r][t] < activity_demands)
+            {
+                schedulable = false;
+                break;
+            }
+        }
+        if (schedulable)
+        {
+            return true;
+        }
         for (unsigned int t = start_time; t < start_time + processing_time; t++)
         {
             if (get_available_capacity(t, r) < activity_demands)
@@ -45,6 +61,7 @@ bool ResourceProfile::is_schedulable(unsigned int start_time, unsigned int activ
                 return false;
             }
         }
+
     }
     return true;
 }
@@ -55,6 +72,7 @@ void ResourceProfile::schedule_at(unsigned int start_time, unsigned int activity
     for (unsigned int r = 0; r < profiles.size(); r++)
     {
         std::vector<unsigned int> &current_profile = profiles[r];
+        std::vector<unsigned int> &current_max_profile = max_profiles[r];
         unsigned int processing_time = instance.processing_time[activity];
         unsigned int activity_demands = instance.demands[activity][r];
         unsigned int completion_time = start_time + processing_time;
@@ -62,13 +80,17 @@ void ResourceProfile::schedule_at(unsigned int start_time, unsigned int activity
         if (completion_time > current_profile.size())
         {
             current_profile.resize(completion_time, 0);
+            current_max_profile.resize(completion_time/10 + 1, 0);
         }
 
         for (unsigned int i = start_time; i < completion_time; i++)
         {
             current_profile[i] += activity_demands;
+            if (current_max_profile[i/10] < current_profile[i])
+            {
+                current_max_profile[i/10] = current_profile[i];
+            }
         }
-
     }
 }
 

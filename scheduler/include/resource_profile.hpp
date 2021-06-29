@@ -20,6 +20,8 @@ private:
 
     std::vector<std::vector<unsigned int>> profiles;
 
+    std::vector<std::vector<unsigned int>> max_profiles;
+
 public:
 
     /**
