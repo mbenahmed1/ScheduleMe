@@ -26,8 +26,8 @@ if __name__ == "__main__":
     RESULTS_DIR         = os.path.abspath(f"phase2_results")
     SEED_PATH           = os.path.join(INSTANCES_DIR, "seeds.txt")
     BEST_KNOWN_PATH     = os.path.join(INSTANCES_DIR, "RCPSP_BKS.csv")
-    CSV_PATH            = os.path.join(RESULTS_DIR, f"{RUN}.csv")
-    TIME                = 2
+    TIME                = 20
+    CSV_PATH            = os.path.join(RESULTS_DIR, f"{RUN}_{TIME}.csv")
 
     INSTANCES       = [os.path.join(INSTANCES_DIR, f) for f in os.listdir(INSTANCES_DIR) if ".RCP" in f]
     INSTANCES       = sorted(INSTANCES, key=lambda x: int(x.split("/")[-1].split("_")[0][1:]))
@@ -97,9 +97,6 @@ if __name__ == "__main__":
                     seed = SEEDS[idx_seed]
                     sol_path = os.path.join(SOLUTIONS_DIR, f"{instance}_n{nbh}_t{TIME}_s{seed}.sol")
                     command = f"{SOLVER_PATH} {INSTANCES[idx_inst]} {sol_path} {TIME} {seed} -n {nbh} -b"
-
-                    print(command)
-                    sys.exit()
 
                     print_progress(i, i_total, seed, instance)
 
