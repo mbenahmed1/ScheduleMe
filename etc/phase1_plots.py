@@ -21,9 +21,9 @@ sns.set_palette("pastel")
 # j60 = pd.read_csv("phase_1_j60.csv")
 # j120 = pd.read_csv("phase_1_j120.csv")
 
-j30 = pd.read_csv("phase_1_wnbh_j30.csv")
-j60 = pd.read_csv("phase_1_wnbh_j60.csv")
-j120 = pd.read_csv("phase_1_wnbh_j120.csv")
+j30 = pd.read_csv("phase1_results/j30.csv")
+j60 = pd.read_csv("phase1_results/j60.csv")
+j120 = pd.read_csv("phase1_results/j120.csv")
 
 
 # j30["makespan"] = j30["opt"] / j30["makespan"]

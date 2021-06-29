@@ -1,3 +1,7 @@
+"""
+    Script to automate the evaluation for phase 1
+    @author David Massanés 
+"""
 import subprocess as sp
 import multiprocessing
 import argparse
@@ -6,7 +10,7 @@ import os
 import re
 
 def print_usage():
-    print("Usage: $ python3 generate_results.py <csv_output_file> [<instance_dir>] [<neighborhood>]")
+    print("Usage: $ python3 phase_1_benchmark.py <csv_output_file> [<instance_dir>] [<neighborhood>]")
     print(" default <instance_dir>: j30")
     print(" default <neighborhood>: all (swap,api,shift,random)")
 
