@@ -63,7 +63,10 @@ void ResourceProfile::schedule_at(unsigned int start_time, unsigned int activity
         {
             current_profile.resize(completion_time, 0);
         }
-
+        if (activity_demands == 0)
+        {
+            continue;
+        }
         for (unsigned int i = start_time; i < completion_time; i++)
         {
             current_profile[i] += activity_demands;
