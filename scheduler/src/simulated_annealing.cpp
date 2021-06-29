@@ -55,6 +55,8 @@ std::vector<unsigned int> SimulatedAnnealing::solve_display(Instance &instance)
     c_s = ScheduleGenerator::earliest_start_schedule(instance, s);
     s_opt = s;
     c_s_opt = c_s;
+    s_dash = s;
+    c_s_dash = c_s;
 
     // Calculate initial temperature
     unsigned int lb1 = 0;
@@ -111,12 +113,12 @@ std::vector<unsigned int> SimulatedAnnealing::solve_display(Instance &instance)
         t_i *= alpha;
 
         // Update alpha
-        if (i % 500 == 0 && t_i > 0.0001)
+        if (i % 100 == 0)
         {
             double crt_time = std::chrono::duration<double, std::milli>(
                 std::chrono::high_resolution_clock::now() - start).count();
-            approx_i = i * time_limit / crt_time;
-            alpha = std::pow(0.0001 / t_i, 1.0 / approx_i);
+            approx_i = (i * time_limit) / crt_time;
+            alpha = std::pow(0.001 / t_i, 1.0 / approx_i);
         }
 
         // Calc time spent
@@ -165,6 +167,8 @@ std::vector<unsigned int> SimulatedAnnealing::solve_benchmark(Instance &instance
     c_s = ScheduleGenerator::earliest_start_schedule(instance, s);
     s_opt = s;
     c_s_opt = c_s;
+    s_dash = s;
+    c_s_dash = c_s;
 
     // Calculate initial temperature
     unsigned int lb1 = 0;
@@ -214,12 +218,12 @@ std::vector<unsigned int> SimulatedAnnealing::solve_benchmark(Instance &instance
         t_i *= alpha;
 
         // Update alpha
-        if (i % 500 == 0 && t_i > 0.0001)
+        if (i % 100 == 0)
         {
             double crt_time = std::chrono::duration<double, std::milli>(
                 std::chrono::high_resolution_clock::now() - start).count();
-            approx_i = i * time_limit / crt_time;
-            alpha = std::pow(0.0001 / t_i, 1.0 / approx_i);
+            approx_i = (i * time_limit) / crt_time;
+            alpha = std::pow(0.001 / t_i, 1.0 / approx_i);
         }
 
         // Calc time spent
