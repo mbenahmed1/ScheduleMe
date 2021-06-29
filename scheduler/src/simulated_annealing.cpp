@@ -133,7 +133,7 @@ std::vector<unsigned int> SimulatedAnnealing::solve_display(Instance &instance)
         i++;
         t_i = next_temp(t_i, i);
 
-        if (i % 200 == 0)
+        if (i % 250 == 0)
         {
             double crt_time = std::chrono::duration<double, std::milli>(
                 std::chrono::high_resolution_clock::now() - start).count() / i;
@@ -252,7 +252,7 @@ std::vector<unsigned int> SimulatedAnnealing::solve_benchmark(Instance &instance
         i++;
         t_i = next_temp(t_i, i);
 
-        if (i % 200 == 0)
+        if (i % 250 == 0)
         {
             double crt_time = std::chrono::duration<double, std::milli>(
                 std::chrono::high_resolution_clock::now() - start).count() / i;
