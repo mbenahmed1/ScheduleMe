@@ -27,9 +27,9 @@ bool Neighborhoods::swap(std::vector<unsigned int> &precedence_list, Instance& i
             std::cout << "sad" << std::endl;
             return false;
         }*/
-        unsigned int temp = precedence_list.at(idx_a);
-        precedence_list.at(idx_a) = precedence_list.at(idx_b);
-        precedence_list.at(idx_b) = temp;
+        unsigned int temp = precedence_list[idx_a];
+        precedence_list[idx_a] = precedence_list[idx_b];
+        precedence_list[idx_b] = temp;
         return true;
     }
     return false;
@@ -43,11 +43,11 @@ bool Neighborhoods::api(std::vector<unsigned int> &precedence_list, Instance& in
     idx_b = idx_a + 1;
 
     /*if(swap_a_with_b_fast(precedence_list, idx_a, idx_b, instance))*/
-    if (!is_b_successor_of_a(instance, precedence_list.at(idx_a), precedence_list.at(idx_b)))
+    if (!is_b_successor_of_a(instance, precedence_list[idx_a], precedence_list[idx_b]))
     {
-        unsigned int temp = precedence_list.at(idx_a);
-        precedence_list.at(idx_a) = precedence_list.at(idx_b);
-        precedence_list.at(idx_b) = temp;
+        unsigned int temp = precedence_list[idx_a];
+        precedence_list[idx_a] = precedence_list[idx_b];
+        precedence_list[idx_b] = temp;
         return true;
     }
     return false;
@@ -73,13 +73,13 @@ bool Neighborhoods::shift(std::vector<unsigned int> &precedence_list, Instance& 
 
     std::vector<unsigned int> to_check = std::vector<unsigned int>(precedence_list.begin() + idx_a, precedence_list.begin() + idx_b +1);
     std::sort(to_check.begin(), to_check.end());
-    if (check_later_schedule(instance, to_check, precedence_list.at(idx_a))) {
+    if (check_later_schedule(instance, to_check, precedence_list[idx_a])) {
         std::vector<unsigned int> copy = precedence_list;
         for (; idx_a < idx_b; idx_a++)
         {
-            unsigned int tmp = copy.at(idx_a);
-            copy.at(idx_a) = copy.at(idx_a + 1);
-            copy.at(idx_a + 1) = tmp;
+            unsigned int tmp = copy[idx_a];
+            copy[idx_a] = copy[idx_a + 1];
+            copy[idx_a + 1] = tmp;
         }
         precedence_list = copy;
         return true;
@@ -105,9 +105,9 @@ bool Neighborhoods::random(std::vector<unsigned int> &precedence_list, Instance&
 bool Neighborhoods::swap_a_with_b(std::vector<unsigned int> &precedence_list, unsigned int idx_a, unsigned int idx_b, Instance &instance)
 {
     std::vector<unsigned int> copy = precedence_list;
-    unsigned int temp = copy.at(idx_a);
-    copy.at(idx_a) = copy.at(idx_b);
-    copy.at(idx_b) = temp;
+    unsigned int temp = copy[idx_a];
+    copy[idx_a] = copy[idx_b];
+    copy[idx_b] = temp;
     return check_precedence(copy, instance);
 }
 
@@ -158,8 +158,8 @@ bool Neighborhoods::check_precedence(std::vector<unsigned int> &precedence_list,
          std::vector<unsigned int> to_check = std::vector<unsigned int>(precedence_list.begin() + idx_a, precedence_list.begin() + idx_b);
          std::sort(to_check.begin(), to_check.end());
 
-        if (check_earlier_schedule(instance, to_check, precedence_list.at(idx_b)))
-            return check_later_schedule(instance, to_check, precedence_list.at(idx_a));
+        if (check_earlier_schedule(instance, to_check, precedence_list[idx_b]))
+            return check_later_schedule(instance, to_check, precedence_list[idx_a]);
         return false;
      }
 
@@ -167,12 +167,12 @@ bool Neighborhoods::check_precedence(std::vector<unsigned int> &precedence_list,
         unsigned int ptr1 = 0;
         unsigned int ptr2 = 0;
 
-        while (ptr1 < precedence_list.size() && ptr2 < instance.predecessors_full.at(activity).size()) {
+        while (ptr1 < precedence_list.size() && ptr2 < instance.predecessors_full[activity].size()) {
 
-            if (precedence_list.at(ptr1) == instance.predecessors_full.at(activity).at(ptr2)) {
+            if (precedence_list[ptr1] == instance.predecessors_full[activity][ptr2]) {
                 return false;
             }
-            else if (precedence_list.at(ptr1) < instance.predecessors_full.at(activity).at(ptr2)) {
+            else if (precedence_list[ptr1] < instance.predecessors_full[activity][ptr2]) {
                 ptr1++;
             } else {
                 ptr2++;
@@ -186,12 +186,12 @@ bool Neighborhoods::check_precedence(std::vector<unsigned int> &precedence_list,
         unsigned int ptr1 = 0;
         unsigned int ptr2 = 0;
 
-        while (ptr1 < precedence_list.size() && ptr2 < instance.successors_full.at(activity).size()) {
+        while (ptr1 < precedence_list.size() && ptr2 < instance.successors_full[activity].size()) {
 
-            if (precedence_list.at(ptr1) == instance.successors_full.at(activity).at(ptr2)) {
+            if (precedence_list[ptr1] == instance.successors_full[activity][ptr2]) {
                 return false;
             }
-            else if (precedence_list.at(ptr1) < instance.successors_full.at(activity).at(ptr2)) {
+            else if (precedence_list[ptr1] < instance.successors_full[activity][ptr2]) {
                 ptr1++;
             } else {
                 ptr2++;
@@ -208,7 +208,7 @@ bool Neighborhoods::check_precedence(std::vector<unsigned int> &precedence_list,
         }
         return false;*/
         // std::find: small vectors, so maybe caching is faster than bin serach?
-        return end(instance.successors_full.at(activity_a)) != std::find(begin(instance.successors_full.at(activity_a)), end(instance.successors_full.at(activity_a)), activity_b);
+        return end(instance.successors_full[activity_a]) != std::find(begin(instance.successors_full[activity_a]), end(instance.successors_full[activity_a]), activity_b);
         // bin search: better complexity, but worse cache usage?
         //return std::binary_search(begin(instance.successors_full.at(activity_a)), end(instance.successors_full.at(activity_a)), activity_b);
 
