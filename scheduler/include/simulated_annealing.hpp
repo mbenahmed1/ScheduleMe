@@ -19,39 +19,32 @@ class SimulatedAnnealing
 {
 
 public:
-    explicit SimulatedAnnealing(double time_limit, double alpha, double start_temp, unsigned int seed, 
-        bool verbose, std::string neighborhood, bool benchmark);
+    explicit SimulatedAnnealing(unsigned int seed, double time_limit, double start_temp, 
+        double alpha, std::string neighborhood, bool benchmark);
 
     std::vector<unsigned int> solve(Instance &instance);
-   
-    double get_alpha() const;
-
-    double get_start_temp() const;
 
 private:
+    unsigned int seed;
+    double time_limit;
+    double start_temp;
+    double alpha;
 
+    std::string neighborhood;
     Neighborhoods nbh;
 
-    double reanneal_temp(double t_i) const;
-
-    double next_temp(double t_i, int i) const;
-
-    static double euler(double c_s_dash, double c_s, double t_i);
-
-    void print_progress(unsigned int c_opt, unsigned int c_s, int step_count, double temp, double time_spent, int approx_i, double alpha) const;
-
-    bool verbose;
-    double time_limit;
-    unsigned int seed;
-    double alpha;
-    double start_temp;
     std::mt19937 mt_rand;
     std::uniform_real_distribution<double> dis;
-    std::string neighborhood;
+
     bool benchmark;
 
-};
+    std::vector<unsigned int> solve_display(Instance &instance);
 
+    std::vector<unsigned int> solve_benchmark(Instance &instance);
+
+    void print_progress(unsigned int c_s_opt, unsigned int c_s, int step_count, 
+        double temp, double time_spent, int approx_i, double alpha) const;
+};
 
 } // namespace ScheduleMe
 
