@@ -9,6 +9,7 @@
 #include "resource_profile.hpp"
 #include <iostream>
 #include <algorithm>
+#include <stack>
 
 namespace ScheduleMe
 {
@@ -27,6 +28,18 @@ public:
 
 
     static std::vector<unsigned int> generate_precedence_list(Instance &instance);
+
+    /**
+     * Performs topological sort on given instance.
+     * @param instance reference to the instance.
+     * @return sorted vector
+     */
+    static std::vector<unsigned int> topological_sort(Instance &instance);
+
+    /**
+     * Util function that gets called by the topological sort function.
+     */
+    static void sort_util(Instance &instance, unsigned int v, bool visited[], std::stack<unsigned int>& stack);
 
 private:
     /**

@@ -3,6 +3,7 @@
 //
 #include "../include/schedule_generator.hpp"
 #include <numeric>
+#include <stack>
 
 namespace ScheduleMe
 {
@@ -54,9 +55,49 @@ unsigned int ScheduleGenerator::spt(Instance &instance)
 
 std::vector<unsigned int> ScheduleGenerator::generate_precedence_list(Instance &instance)
 {
-    std::vector<unsigned int> ret(instance.n());
-    std::iota(ret.begin(), ret.end(), 0);
-    return ret;
+    return topological_sort(instance);
+}
+
+std::vector<unsigned int> ScheduleGenerator::topological_sort(Instance &instance)
+{
+    std::stack<unsigned int> stack;
+
+    bool* visited = new bool[instance.n()];
+    for (unsigned int i = 0; i < instance.n(); i++)
+    {
+        visited[i] = false;
+    }
+
+    for (unsigned int i = 0; i < instance.n(); i++)
+    {
+        if (!visited[i])
+        {
+            sort_util(instance, i, visited, stack);
+        }
+    }
+
+    std::vector<unsigned int> sol;
+    while (!stack.empty())
+    {
+        sol.push_back(stack.top());
+        stack.pop();
+    }
+    return sol;
+}
+
+void ScheduleGenerator::sort_util(Instance &instance, unsigned int v, bool visited[], std::stack<unsigned int>& stack)
+{
+    visited[v] = true;
+
+    std::vector<unsigned int>::iterator i;
+    for (i = instance.successors[v].begin(); i != instance.successors[v].end(); ++i)
+    {
+        if (!visited[*i])
+        {
+            sort_util(instance, *i, visited, stack);
+        }
+    }
+    stack.push(v);
 }
 
 } // namespace ScheduleMe

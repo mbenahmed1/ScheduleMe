@@ -1,5 +1,7 @@
 # Solutions directory
 solutions
+.ipynb_checkpoints
+
 
 # tex
 *.aux
