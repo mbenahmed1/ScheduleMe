@@ -176,7 +176,7 @@ int main(int argc, char **argv)
     }
     else
     {
-        SimulatedAnnealing sa = SimulatedAnnealing(SEED, TIME_LIMIT * 1000, TEMPERATURE, ALPHA, NEIGHBORHOOD, BENCHMARK);
+        SimulatedAnnealing sa = SimulatedAnnealing(TIME_LIMIT, ALPHA, TEMPERATURE, SEED, VERBOSE, NEIGHBORHOOD, BENCHMARK);
         std::vector<unsigned int> s = sa.solve(instance);
         if (VERBOSE)
         {
