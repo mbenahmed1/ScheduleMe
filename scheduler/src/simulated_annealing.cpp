@@ -82,7 +82,7 @@ std::vector<unsigned int> SimulatedAnnealing::solve_display(Instance &instance)
                 lb1 = sum;
             }
         }
-        t_i = c_s - lb1;
+        t_i = (c_s - lb1) / 2.0;
     }
 
     std::cout   << "Initial makespan:" << std::right << std::setw(4) << c_s
@@ -132,7 +132,7 @@ std::vector<unsigned int> SimulatedAnnealing::solve_display(Instance &instance)
             double crt_time = std::chrono::duration<double, std::milli>(
                 std::chrono::high_resolution_clock::now() - start).count() / i;
             approx_i = time_limit / crt_time;
-            alpha = std::pow(0.00001 / t_i, 1.0 / approx_i);
+            alpha = std::pow(0.000000001 / t_i, 1.0 / approx_i);
         }
 
         auto end = std::chrono::high_resolution_clock::now();
@@ -201,7 +201,7 @@ std::vector<unsigned int> SimulatedAnnealing::solve_benchmark(Instance &instance
                 lb1 = sum;
             }
         }
-        t_i = c_s - lb1;
+        t_i = (c_s - lb1) / 2.0;
     }
 
     // Initial best solution is the first one
@@ -245,7 +245,7 @@ std::vector<unsigned int> SimulatedAnnealing::solve_benchmark(Instance &instance
             double crt_time = std::chrono::duration<double, std::milli>(
                 std::chrono::high_resolution_clock::now() - start).count() / i;
             approx_i = time_limit / crt_time;
-            alpha = std::pow(0.00001 / t_i, 1.0 / approx_i);
+            alpha = std::pow(0.000000001 / t_i, 1.0 / approx_i);
         }
 
         auto end = std::chrono::high_resolution_clock::now();
