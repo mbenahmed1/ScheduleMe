@@ -85,13 +85,10 @@ std::vector<unsigned int> SimulatedAnnealing::solve_display(Instance &instance)
         t_i = c_s - lb1;
     }
 
-    if (! benchmark)
-    {
-        std::cout   << "Initial makespan:" << std::right << std::setw(4) << c_s
-                    << std::right << std::setw(85)
-                    << " | Time limit:" << std::right << std::setw(10) << time_limit / 1000.0
-                    << " | Initial Tmp: " << std::right << std::setw(9) << t_i << std::endl;
-    }
+    std::cout   << "Initial makespan:" << std::right << std::setw(4) << c_s
+                << std::right << std::setw(85)
+                << " | Time limit:" << std::right << std::setw(10) << time_limit / 1000.0
+                << " | Initial Tmp: " << std::right << std::setw(9) << t_i << std::endl;
 
     // Initial best solution is the first one
     s_opt = s;
@@ -113,10 +110,7 @@ std::vector<unsigned int> SimulatedAnnealing::solve_display(Instance &instance)
         // allows a worse solution use s_dash in next step
         random = dis(mt_rand);
         min = std::min(1.0, euler(c_s_dash, c_s, t_i));
-        if (!benchmark)
-        {
-            print_progress(c_s_opt, c_s, i, t_i, time_spent, approx_i, alpha);
-        }
+        print_progress(c_s_opt, c_s, i, t_i, time_spent, approx_i, alpha);
         if(random < min)
         {
             s = s_dash;
@@ -145,10 +139,6 @@ std::vector<unsigned int> SimulatedAnnealing::solve_display(Instance &instance)
         time_spent = std::chrono::duration<double, std::milli>(end - start).count();
     }
 
-    if (benchmark)
-    {
-        std::cout << c_s_opt;
-    }
     std::cout << std::endl;
     return s_opt;
 }
@@ -156,8 +146,6 @@ std::vector<unsigned int> SimulatedAnnealing::solve_display(Instance &instance)
 std::vector<unsigned int> SimulatedAnnealing::solve_benchmark(Instance &instance)
 {
     auto start = std::chrono::high_resolution_clock::now();
-
-    std::cout   << std::fixed << std::setprecision(5);
 
     double time_spent = 0;
     time_limit *= 1000;
