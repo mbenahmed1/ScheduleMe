@@ -10,6 +10,27 @@ namespace ScheduleMe
 ResourceProfile::ResourceProfile(Instance &instance) : instance(instance)
 {
     profiles.resize(instance.r());
+    for (unsigned int i = 0; i < instance.r(); i++)
+    {
+        profiles[i].resize(512, 0);
+    }
+    jump_points.resize(512, 0);
+}
+
+unsigned int ResourceProfile::get_next_jump_point(unsigned int time)
+{
+    if (jump_points.size() < time)
+    {
+        return time;
+    }
+    for (; time < jump_points.size(); time++)
+    {
+        if (jump_points[time])
+        {
+            return time;
+        }
+    }
+    return time;
 }
 
 unsigned int ResourceProfile::get_available_capacity(unsigned int time, unsigned int resource) const
@@ -51,13 +72,12 @@ bool ResourceProfile::is_schedulable(unsigned int start_time, unsigned int activ
 
 void ResourceProfile::schedule_at(unsigned int start_time, unsigned int activity)
 {
-
+    unsigned int processing_time = instance.processing_time[activity];
+    unsigned int completion_time = start_time + processing_time;
     for (unsigned int r = 0; r < profiles.size(); r++)
     {
         std::vector<unsigned int> &current_profile = profiles[r];
-        unsigned int processing_time = instance.processing_time[activity];
         unsigned int activity_demands = instance.demands[activity][r];
-        unsigned int completion_time = start_time + processing_time;
 
         if (completion_time > current_profile.size())
         {
@@ -71,8 +91,13 @@ void ResourceProfile::schedule_at(unsigned int start_time, unsigned int activity
         {
             current_profile[i] += activity_demands;
         }
-
     }
+    if (completion_time > jump_points.size())
+    {
+        jump_points.resize(completion_time, 0);
+    }
+    jump_points[start_time] = true;
+    jump_points[completion_time] = true;
 }
 
 void ResourceProfile::print_resource_profiles() const

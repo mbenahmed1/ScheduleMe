@@ -20,6 +20,8 @@ private:
 
     std::vector<std::vector<unsigned int>> profiles;
 
+    std::vector<bool> jump_points;
+
 public:
 
     /**
@@ -29,6 +31,8 @@ public:
      */
     ResourceProfile(Instance &instance);
 
+    unsigned int get_next_jump_point(unsigned int time);
+    
     /**
      * Calculates the available capacity.
      *

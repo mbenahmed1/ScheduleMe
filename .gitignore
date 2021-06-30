@@ -1,7 +1,7 @@
 # Solutions directory
 solutions
 .ipynb_checkpoints
-
+presentation/**/*.pdf
 
 # tex
 *.aux

@@ -32,7 +32,7 @@ ScheduleGenerator::earliest_start_schedule(Instance &instance, const std::vector
 
         while (!rp.is_schedulable(t, j))
         {
-            t += 1;
+            t = rp.get_next_jump_point(t + 1);
         }
         rp.schedule_at(t, j);
         instance.start_time[j] = t;

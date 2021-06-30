@@ -65,24 +65,9 @@ std::vector<unsigned int> SimulatedAnnealing::solve_display(Instance &instance)
     c_s = ScheduleGenerator::earliest_start_schedule(instance, s);
 
     // Calculate initial temperature
-    unsigned int lb1 = 0;
     if (start_temp == 0.0)
     {
-        for (unsigned int i = 0; i < instance.r(); i++)
-        {
-            double sum = 0.0;
-            for (unsigned int j = 0; j < instance.n(); j++)
-            {
-                sum += instance.demands[j][i] * instance.processing_time[j];
-            }
-            sum = std::ceil(sum / instance.resources[i]);
-            // std::cout << sum << std::endl;
-            if (sum > lb1)
-            {
-                lb1 = sum;
-            }
-        }
-        t_i = (c_s - lb1) / 2.0;
+        t_i = calc_initial_temp(instance, c_s);
     }
 
     std::cout   << "Initial makespan:" << std::right << std::setw(4) << c_s
@@ -127,12 +112,12 @@ std::vector<unsigned int> SimulatedAnnealing::solve_display(Instance &instance)
         i++;
         t_i = next_temp(t_i, i);
 
-        if (i % 250 == 0)
+        if (i % i_update_alpha == 0)
         {
             double crt_time = std::chrono::duration<double, std::milli>(
                 std::chrono::high_resolution_clock::now() - start).count() / i;
             approx_i = time_limit / crt_time;
-            alpha = std::pow(0.000000001 / t_i, 1.0 / approx_i);
+            alpha = std::pow(conv_temp / t_i, 1.0 / approx_i);
         }
 
         auto end = std::chrono::high_resolution_clock::now();
@@ -184,24 +169,9 @@ std::vector<unsigned int> SimulatedAnnealing::solve_benchmark(Instance &instance
     c_s = ScheduleGenerator::earliest_start_schedule(instance, s);
 
     // Calculate initial temperature
-    unsigned int lb1 = 0;
     if (start_temp == 0.0)
     {
-        for (unsigned int i = 0; i < instance.r(); i++)
-        {
-            double sum = 0.0;
-            for (unsigned int j = 0; j < instance.n(); j++)
-            {
-                sum += instance.demands[j][i] * instance.processing_time[j];
-            }
-            sum = std::ceil(sum / instance.resources[i]);
-            // std::cout << sum << std::endl;
-            if (sum > lb1)
-            {
-                lb1 = sum;
-            }
-        }
-        t_i = (c_s - lb1) / 2.0;
+        t_i = calc_initial_temp(instance, c_s);
     }
 
     // Initial best solution is the first one
@@ -240,12 +210,12 @@ std::vector<unsigned int> SimulatedAnnealing::solve_benchmark(Instance &instance
         i++;
         t_i = next_temp(t_i, i);
 
-        if (i % 250 == 0)
+        if (i % i_update_alpha == 0)
         {
             double crt_time = std::chrono::duration<double, std::milli>(
                 std::chrono::high_resolution_clock::now() - start).count() / i;
             approx_i = time_limit / crt_time;
-            alpha = std::pow(0.000000001 / t_i, 1.0 / approx_i);
+            alpha = std::pow(conv_temp / t_i, 1.0 / approx_i);
         }
 
         auto end = std::chrono::high_resolution_clock::now();
@@ -255,6 +225,25 @@ std::vector<unsigned int> SimulatedAnnealing::solve_benchmark(Instance &instance
     std::cout << c_s_opt;
     std::cout << std::endl;
     return s_opt;
+}
+
+double SimulatedAnnealing::calc_initial_temp(Instance &instance, unsigned int c_s)
+{
+    unsigned int lb1 = 0;
+    for (unsigned int i = 0; i < instance.r(); i++)
+    {
+        double sum = 0.0;
+        for (unsigned int j = 0; j < instance.n(); j++)
+        {
+            sum += instance.demands[j][i] * instance.processing_time[j];
+        }
+        sum = std::ceil(sum / instance.resources[i]);
+        if (sum > lb1)
+        {
+            lb1 = sum;
+        }
+    }
+    return c_s - lb1;
 }
 
 double SimulatedAnnealing::euler(double c_s_dash, double c_s, double t_i)

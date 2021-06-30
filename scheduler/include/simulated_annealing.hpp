@@ -29,12 +29,16 @@ public:
     double get_start_temp() const;
 
 private:
+    static constexpr int        i_update_alpha = 1000;
+    static constexpr double     conv_temp = 0.000000001;
 
     std::vector<unsigned int> solve_display(Instance &instance);
 
     std::vector<unsigned int> solve_benchmark(Instance &instance);
 
     Neighborhoods nbh;
+
+    double calc_initial_temp(Instance &instance, unsigned int c_s);
 
     double reanneal_temp(double t_i) const;
 
