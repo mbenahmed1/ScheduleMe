@@ -30,6 +30,10 @@ public:
 
 private:
 
+    std::vector<unsigned int> solve_display(Instance &instance);
+
+    std::vector<unsigned int> solve_benchmark(Instance &instance);
+
     Neighborhoods nbh;
 
     double reanneal_temp(double t_i) const;

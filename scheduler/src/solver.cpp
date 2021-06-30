@@ -23,7 +23,7 @@ static double              TEMPERATURE          = 0.0;
 static std::string         NEIGHBORHOOD         = "swap";
 static bool                NOHEUR               = false;
 static bool                VERBOSE              = false;
-static bool                BENCHMARK            = false;
+static bool                BENCHMARK            = true;
 static bool                PLOT                 = false;
 
 bool parse_arguments(int, char **);
@@ -41,7 +41,7 @@ void print_usage()
     std::cout << " --neighborhood, -n   <swap|api|shift|random>, default=swap" << std::endl;
     std::cout << " --noheur, -h         do not optimize the initial solution" << std::endl;
     std::cout << " --verbose, -v        print resource profile of solution" << std::endl;
-    std::cout << " --benchmark, -b      only print optimal makespan and nothing else" << std::endl;
+    std::cout << " --nobenchmark, -b    print progress for every iteration" << std::endl;
     std::cout << " --plot, -p           create .PLOT file for plotter in the same directory as solution" << std::endl;
 }
 
@@ -55,7 +55,7 @@ bool parse_arguments(int argc, char **argv)
             {"neighborhood",    required_argument,      nullptr,    'n'},
             {"noheur",          no_argument,            nullptr,    'h'},
             {"verbose",         no_argument,            nullptr,    'v'},
-            {"benchmark",       no_argument,            nullptr,    'b'},
+            {"nobenchmark",     no_argument,            nullptr,    'b'},
             {"plot",            no_argument,            nullptr,    'p'},
             {nullptr,           0,                      nullptr,    0}
     };
@@ -94,7 +94,7 @@ bool parse_arguments(int argc, char **argv)
                 VERBOSE = true;
                 break;
             case 'b' :
-                BENCHMARK = true;
+                BENCHMARK = false;
                 break;
             case 'p' :
                 PLOT = true;
