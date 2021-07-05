@@ -14,8 +14,8 @@ import time
 YELLOW  = '\033[93m'
 ENDC    = '\033[0m'
 
-def print_progress(i, i_total, seed, instance):
-    sys.stdout.write(f"\rIteration {i:>5}/{i_total} | Seed {seed:>11} | Instance {instance:>8}")
+def print_progress(i, i_total, instance):
+    sys.stdout.write(f"\rIteration {i:>5}/{i_total} | Instance {instance:>8}")
     sys.stdout.flush()
 
 if __name__ == "__main__":
@@ -26,7 +26,7 @@ if __name__ == "__main__":
     RESULTS_DIR         = os.path.abspath(f"phase2_results")
     SEED_PATH           = os.path.join(INSTANCES_DIR, "seeds.txt")
     BEST_KNOWN_PATH     = os.path.join(INSTANCES_DIR, "RCPSP_BKS.csv")
-    TIME                = 20
+    TIME                = 60
     CSV_PATH            = os.path.join(RESULTS_DIR, f"{RUN}_{TIME}.csv")
 
     INSTANCES       = [os.path.join(INSTANCES_DIR, f) for f in os.listdir(INSTANCES_DIR) if ".RCP" in f]
@@ -72,16 +72,12 @@ if __name__ == "__main__":
     print(f"{YELLOW}SEEDS                   {ENDC}  {SEED_PATH}")
     print(f"{YELLOW}NB_SEEDS                {ENDC}  {NB_SEEDS}")
     print(f"{YELLOW}BEST_KNOWN_SOLUTIONS    {ENDC}  {BEST_KNOWN_SOLUTIONS}")
-
     print()
+
     with open(CSV_PATH, "w+") as csv_file:
         csv_file.write("instance,bks,nbh,time,seed,makespan\n")
 
-        NB_NEIGHBORHOODS    = 1
-        # NB_INSTANCES        = 1
-        # NB_SEEDS            = 1
-
-        i_total = NB_NEIGHBORHOODS * NB_INSTANCES * NB_SEEDS
+        i_total = NB_NEIGHBORHOODS * NB_INSTANCES
         i = 0
 
         for idx_inst in range(NB_INSTANCES):
@@ -92,21 +88,21 @@ if __name__ == "__main__":
             for idx_nbh in range(NB_NEIGHBORHOODS):
                 nbh = NEIGHBORHOODS[idx_nbh]
 
+                i += 1
+                print_progress(i, i_total, instance)
+
+                processes = []
                 for idx_seed in range(NB_SEEDS):
-                    i += 1
                     seed = SEEDS[idx_seed]
                     sol_path = os.path.join(SOLUTIONS_DIR, f"{instance}_n{nbh}_t{TIME}_s{seed}.sol")
                     command = f"{SOLVER_PATH} {INSTANCES[idx_inst]} {sol_path} {TIME} {seed} -n {nbh} -b"
+                    processes.append((sp.Popen(command, shell=True, stdout=sp.PIPE), seed))
 
-                    print_progress(i, i_total, seed, instance)
-
-                    p = sp.Popen(command, shell=True, stdout=sp.PIPE)
-                    p.wait()
-                    makespan = p.communicate()[0][:-1].decode()
-
-                    csv_line = f"{instance},{bks},{nbh},{TIME},{seed},{makespan}\n"
-                    csv_file.write(csv_line)
-
-    print()
-
+                    if len(processes) >= 5:
+                        for p in processes:
+                            p[0].wait()
+                            makespan = p[0].communicate()[0][:-1].decode()
+                            csv_line = f"{instance},{bks},{nbh},{TIME},{p[1]},{makespan}\n"
+                            csv_file.write(csv_line)
+                        processes = []
 

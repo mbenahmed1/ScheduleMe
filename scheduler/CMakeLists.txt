@@ -5,7 +5,7 @@ project(scheduler)
 set(CMAKE_CXX_STANDARD 14)
 
 add_compile_options(
-        -Wall -pedantic -Wextra -Wcast-align
+        -O3 -Wall -pedantic -Wextra -Wcast-align
         -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2
         -Winit-self -Wlogical-op -Wmissing-declarations -Wmissing-include-dirs
         -Wnoexcept -Wold-style-cast -Woverloaded-virtual -Wredundant-decls
