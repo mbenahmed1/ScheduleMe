@@ -19,7 +19,7 @@ def print_progress(i, i_total, instance):
     sys.stdout.flush()
 
 if __name__ == "__main__":
-    RUN = "new"
+    RUN = "old"
     SOLVER_PATH         = os.path.abspath("../scheduler/build/solver")
     INSTANCES_DIR       = os.path.abspath("../benchmark_instances")
     SOLUTIONS_DIR       = os.path.abspath(f"../benchmark_solutions/{RUN}")
@@ -95,7 +95,7 @@ if __name__ == "__main__":
                 for idx_seed in range(NB_SEEDS):
                     seed = SEEDS[idx_seed]
                     sol_path = os.path.join(SOLUTIONS_DIR, f"{instance}_n{nbh}_t{TIME}_s{seed}.sol")
-                    command = f"{SOLVER_PATH} {INSTANCES[idx_inst]} {sol_path} {TIME} {seed} -n {nbh}"
+                    command = f"{SOLVER_PATH} {INSTANCES[idx_inst]} {sol_path} {TIME} {seed} -n {nbh} -b"
                     processes.append((sp.Popen(command, shell=True, stdout=sp.PIPE), seed))
 
                     if len(processes) >= 5:
