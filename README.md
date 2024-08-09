@@ -53,7 +53,7 @@ Activity ```6``` needs to be finished before activity ```1``` can start.
 
 #### SWAP
 
-The **SHIFT** neighborhood selects two activities that swap positions in the sequence. The activities in between remain in the same position.
+The **SWAP** neighborhood selects two activities that swap positions in the sequence. The activities in between remain in the same position.
 In this example activities ```1``` and ```3``` are swapped, resulting in a slightly changed but still valid schedule.
 
 ![swap1](https://github.com/user-attachments/assets/9252c882-643e-47aa-a996-9bcd002d5085)
